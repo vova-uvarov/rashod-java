@@ -1,0 +1,97 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="vuvarov" id="17022019-1934">
+        <createTable tableName="app_param">
+            <column name="id" remarks="ID" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="pk_app_param"/>
+            </column>
+            <column name="bool_value" type="boolean"/>
+            <column name="char_value" type="varchar(255)"/>
+            <column name="date_value" type="datetime"/>
+            <column name="decimal_value" type="decimal"/>
+            <column name="number_value" type="bigint"/>
+            <column name="group" type="varchar(255)"/>
+            <column name="name" type="varchar(255)"/>
+            <column name="comment" type="varchar(512)"/>
+
+            <column name="ins_time" remarks="Дата время вставки записи" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modif_time" remarks="Дата время модификации записи" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+
+        <createTable tableName="category">
+            <column name="id" remarks="ID" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="pk_app_category"/>
+            </column>
+
+            <column name="name" type="varchar(255)"/>
+            <column name="description" type="varchar(2048)"/>
+
+            <column name="ins_time" remarks="Дата время вставки записи" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modif_time" remarks="Дата время модификации записи" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="account">
+            <column name="id" remarks="ID" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="pk_app_account"/>
+            </column>
+
+            <column name="name" type="varchar(255)"/>
+            <column name="description" type="varchar(2048)"/>
+            <column name="account_type" type="varchar(128)"/>
+            <column name="target_cost" type="decimal"/>
+            <column name="color" type="varchar(255)"/>
+            <column name="round" type="boolean"/>
+            <column name="is_balance" type="boolean"/>
+            <column name="status" type="varchar(64)"/>
+            <column name="currency" type="varchar(32)"/>
+
+            <column name="ins_time" remarks="Дата время вставки записи" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modif_time" remarks="Дата время модификации записи" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="operation">
+            <column name="id" remarks="ID" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="pk_operation"/>
+            </column>
+
+            <column name="parent_id" type="bigint"/>
+            <column name="account_id" type="bigint"/>
+            <column name="account_to_transfer_id" type="bigint"/>
+            <column name="category_id" type="bigint"/>
+            <column name="shopping_list" type="text"/>
+            <column name="comment" type="varchar(2048)"/>
+            <column name="tags" type="varchar(1024)"/>
+            <column name="cost" type="decimal"/>
+            <column name="currency_cost" type="decimal"/>
+            <column name="place" type="varchar(255)"/>
+            <column name="author" type="varchar(128)"/>
+            <column name="operation_type" type="varchar(128)"/>
+            <column name="operation_date" type="datetime"/>
+
+            <column name="ins_time" remarks="Дата время вставки записи" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modif_time" remarks="Дата время модификации записи" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
+</databaseChangeLog>

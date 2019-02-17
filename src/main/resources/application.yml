@@ -1,0 +1,16 @@
+server:
+  port: 8092
+  compression:
+    enabled: true
+
+spring:
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5440/rashod2
+    username: user
+    password: p123
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: validate
+  liquibase:
+    changeLog: classpath:/liquibase/db.changelog-master.xml

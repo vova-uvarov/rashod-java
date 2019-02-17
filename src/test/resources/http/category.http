@@ -1,0 +1,17 @@
+GET localhost:8092/api/categories
+
+###
+
+POST localhost:8092/api/categories
+Content-Type: application/json
+
+{
+  "name": "testCategory",
+  "description": "descriptionTest"
+}
+
+###
+
+DELETE localhost:8092/api/categories/2
+
+###

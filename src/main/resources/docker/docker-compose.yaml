@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+
+  rashod-java-db:
+    container_name: rashod-java-db
+    image: postgres:10
+    restart: always
+    ports:
+      - 5441:5432
+    environment:
+      - POSTGRES_USER=rashod
+      - POSTGRES_PASSWORD=p123
+      - POSTGRES_DB=rashod
+    volumes:
+      - /tmp/var/lib/postgresql/history/data:/var/lib/postgresql/data
+      - /IdeaProjects/postgresql/history/data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+networks:
+  backend:
