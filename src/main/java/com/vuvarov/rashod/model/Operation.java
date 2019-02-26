@@ -12,18 +12,11 @@ import java.time.LocalDateTime;
 @Entity
 public class Operation extends Model {
 
-    private Long parentId;
-    //    todo указать связь
-    @OneToOne
-    @JoinColumn(name = "accountId")
-    private Account account;
+    Long parentId;
+    Long accountId;
 
     // todo Счет куда переводятся деньги, используется только в операциях типа перевод. Наверное нужно наследование
-    @OneToOne
-    @JoinColumn(name = "accountToTransferId")
-    Account accountToTransfer;
-
-    //    todo указать связь
+    Long accountToTransferId;
 
     @OneToOne
     @JoinColumn(name = "categoryId")
@@ -49,6 +42,8 @@ public class Operation extends Model {
      * Сумма в валюте зачисления. Используется только в переводах
      */
     BigDecimal currencyCost;
+
+    boolean plan;
 
     String place;
     String author; // todo это будет пользователь

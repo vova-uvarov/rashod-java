@@ -2,24 +2,22 @@ package com.vuvarov.rashod.web;
 
 import com.vuvarov.rashod.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
-public abstract class RestRepositoryController<E extends Model, T extends Serializable, R extends CrudRepository<E, T>> {
+public abstract class RestRepositoryController<E extends Model, T extends Serializable, R extends PagingAndSortingRepository<E, T>> {
 
     @Autowired
     protected R repository;
 
     @GetMapping()
-    public List<E> findAll() {
-        return StreamSupport
-                .stream(repository.findAll().spliterator(), false)
-                .collect(Collectors.toList());
+    public Page<E> findAll(@PageableDefault(sort = "id") Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
     @PostMapping

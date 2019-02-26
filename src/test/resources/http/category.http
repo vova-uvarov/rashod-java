@@ -1,4 +1,4 @@
-GET localhost:8092/api/categories
+GET localhost:8092/api/categories?size=2
 
 ###
 
