@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface OperationRepository extends PagingAndSortingRepository<Operation, Long> {
-    List<Operation> findAllByAccountIdOrAccountToTransferIdAndPlanFalse(Long accountId, Long accotunToTransferId);
+    List<Operation> findAllByAccountIdOrAccountToTransferIdAndPlan(Long accountId, Long accotunToTransferId, boolean plan);
 }
