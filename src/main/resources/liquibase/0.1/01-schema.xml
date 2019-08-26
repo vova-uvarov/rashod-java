@@ -83,6 +83,7 @@
             <column name="author" type="varchar(128)"/>
             <column name="operation_type" type="varchar(128)"/>
             <column name="operation_date" type="datetime"/>
+            <column name="plan" type="boolean"/>
 
             <column name="ins_time" remarks="Дата время вставки записи" type="datetime">
                 <constraints nullable="false"/>

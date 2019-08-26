@@ -2,12 +2,14 @@ package com.vuvarov.rashod.model;
 
 import com.vuvarov.rashod.model.enums.OperationType;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 //todo возможно стоит сделать наследование (хотя и хранить в одной таблице)
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 public class Operation extends Model {
@@ -25,6 +27,8 @@ public class Operation extends Model {
     /**
      * Список покупок через запятую в старом приложении это поле description
      */
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     String shoppingList;
     /**
      * Просто комментарий в свободной форме

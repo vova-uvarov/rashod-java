@@ -14,6 +14,6 @@ public class BalanceController {
     
     @GetMapping
     public List<AccountBalance> all(){
-        
+        return null;
     }
 }
