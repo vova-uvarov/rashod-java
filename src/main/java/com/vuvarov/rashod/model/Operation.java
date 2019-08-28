@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 //todo возможно стоит сделать наследование (хотя и хранить в одной таблице)
 @EqualsAndHashCode(callSuper = true)
@@ -29,7 +30,7 @@ public class Operation extends Model {
      */
     @Lob
     @Column(columnDefinition = "LONGTEXT")
-    String shoppingList;
+    List<String> shoppingList;
     /**
      * Просто комментарий в свободной форме
      */
