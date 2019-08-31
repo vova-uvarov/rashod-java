@@ -3,7 +3,11 @@ server:
   compression:
     enabled: true
 
+
 spring:
+  data:
+    rest:
+      detection-strategy: annotated
   datasource:
     url: jdbc:postgresql://127.0.0.1:5440/rashod2
     username: user
