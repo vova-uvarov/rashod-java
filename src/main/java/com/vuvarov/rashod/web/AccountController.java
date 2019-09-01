@@ -15,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/accounts")
 @RequiredArgsConstructor
+@CrossOrigin
 public class AccountController extends RestRepositoryController<Account, Long, AccountRepository> {
 
     private final IAccountService accountService;

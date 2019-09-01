@@ -25,12 +25,9 @@ public class Operation extends Model {
     @JoinColumn(name = "categoryId")
     Category category;
 
-    /**
-     * Список покупок через запятую в старом приложении это поле description
-     */
-    @Lob
-    @Column(columnDefinition = "LONGTEXT")
-    List<String> shoppingList;
+    @OneToMany
+    @JoinColumn(name = "operationId", updatable = false, insertable = false)
+    List<ShoppingItem> shoppingList;
     /**
      * Просто комментарий в свободной форме
      */

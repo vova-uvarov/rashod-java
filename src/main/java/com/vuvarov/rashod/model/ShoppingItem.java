@@ -1,11 +1,14 @@
 package com.vuvarov.rashod.model;
 
+import com.vuvarov.rashod.model.enums.ShoppingItemMeasure;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 @Data
 @Entity
@@ -13,5 +16,8 @@ import javax.persistence.Entity;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ShoppingItem extends Model {
     Long operationId;
-
+    String name;
+    @Enumerated(EnumType.STRING)
+    ShoppingItemMeasure measure;
+    Long measureValue;
 }
