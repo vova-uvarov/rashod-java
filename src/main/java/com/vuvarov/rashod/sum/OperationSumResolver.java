@@ -14,7 +14,7 @@ public class OperationSumResolver {
             return operation.getCost();
         }
 
-        if (operation.getOperationType().equals(OperationType.CONSMPTION)) {
+        if (operation.getOperationType().equals(OperationType.CONSUMPTION)) {
             return operation.getCost().negate(); // Расход или перевод со счета
         }
 
