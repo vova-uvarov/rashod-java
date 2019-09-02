@@ -4,4 +4,4 @@ spring:
     username: postgres
     password: p123
   liquibase:
-    drop-first: true
+    drop-first: false

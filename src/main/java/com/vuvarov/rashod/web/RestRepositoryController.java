@@ -4,6 +4,7 @@ import com.vuvarov.rashod.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ public abstract class RestRepositoryController<E extends Model, T extends Serial
     protected R repository;
 
     @GetMapping()
-    public Page<E> findAll(@PageableDefault(sort = "id") Pageable pageable) {
+    public Page<E> findAll(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         return repository.findAll(pageable);
     }
 
