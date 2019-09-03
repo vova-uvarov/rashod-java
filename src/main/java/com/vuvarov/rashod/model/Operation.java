@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.vuvarov.rashod.model.enums.OperationType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 //todo возможно стоит сделать наследование (хотя и хранить в одной таблице)
@@ -59,6 +61,5 @@ public class Operation extends Model {
     OperationType operationType;
 
     @Column(columnDefinition = "TIMESTAMP")
-    @JsonFormat(pattern="yyyy-MM-dd")
     LocalDateTime operationDate;
 }
