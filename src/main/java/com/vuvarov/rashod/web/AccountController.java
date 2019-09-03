@@ -29,7 +29,7 @@ public class AccountController extends RestRepositoryController<Account, Long, A
         return accountService.balance(accountId);
     }
 
-    @GetMapping("/{id}/balances")
+    @GetMapping("/balances")
     public List<AccountBalance> balance() {
         return accountService.accountBalances();
     }

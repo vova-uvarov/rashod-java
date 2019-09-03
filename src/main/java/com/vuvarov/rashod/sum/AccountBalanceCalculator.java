@@ -1,5 +1,6 @@
 package com.vuvarov.rashod.sum;
 
+import com.vuvarov.rashod.model.Account;
 import com.vuvarov.rashod.model.Operation;
 import com.vuvarov.rashod.model.dto.AccountBalance;
 import com.vuvarov.rashod.service.IOperationService;
@@ -11,18 +12,22 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class AccountBalanceCalculator implements ICalculator<Long, AccountBalance> {
+public class AccountBalanceCalculator implements ICalculator<Account, AccountBalance> {
     private final IOperationService operationService;
     private final OperationSumResolver sumResolver;
 
     @Override
-    public AccountBalance calculate(Long accountId) {
-        List<Operation> operations = operationService.findAllOperations(accountId, false);
+    public AccountBalance calculate(Account account) {
+        List<Operation> operations = operationService.findAllOperations(account.getId(), false);
         BigDecimal result = operations.stream().
                 filter(operation -> !operation.isPlan())
-                .map(sumResolver::extractSum)
+                .map(op->sumResolver.extractSum(op, account.getId()))
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
-        return new AccountBalance(accountId, result);
+        return AccountBalance.builder()
+                .accountId(account.getId())
+                .accountName(account.getName())
+                .balance(result)
+                .build();
     }
 }
