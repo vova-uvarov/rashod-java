@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -29,8 +30,18 @@ public class AccountController extends RestRepositoryController<Account, Long, A
         return accountService.balance(accountId);
     }
 
+    @GetMapping("/balances/goal/byCurrency")
+    public List<AccountBalance> balancesGoalByCurrency() {
+        return accountService.balancesGoalByCurrency();
+    }
+
     @GetMapping("/balances")
     public List<AccountBalance> balance() {
         return accountService.accountBalances();
+    }
+
+    @GetMapping("/totalBalance")
+    public BigDecimal totalBalance() {
+        return accountService.totalBalance();
     }
 }
