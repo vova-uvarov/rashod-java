@@ -13,5 +13,5 @@ import java.util.List;
 public interface OperationRepository extends PagingAndSortingRepository<Operation, Long> {
     List<Operation> findAllByAccountIdOrAccountToTransferIdAndPlan(Long accountId, Long accotunToTransferId, boolean plan);
 
-    Page<Operation> findAllByOperationTypeIn(List<OperationType> operationTypes, Pageable pageable);
+    Page<Operation> findAllByOperationTypeInAndPlan(List<OperationType> operationTypes, boolean isPlan, Pageable pageable);
 }
