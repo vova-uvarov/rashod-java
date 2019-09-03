@@ -1,6 +1,7 @@
 package com.vuvarov.rashod.repository;
 
 import com.vuvarov.rashod.model.Account;
+import com.vuvarov.rashod.model.enums.AccountStatus;
 import com.vuvarov.rashod.model.enums.AccountType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,5 +18,6 @@ public interface AccountRepository extends PagingAndSortingRepository<Account, L
     @Query("SELECT a FROM Account a WHERE LOWER(a.name) LIKE LOWER(?1)")
     Page<Account> findAllByName(String q, Pageable page);
 
-    List<Account> findAllByIsBalanceTrueAndAccountType(AccountType accountType);
+    List<Account> findAllByIsBalanceAndAccountTypeAndStatus(boolean isBalance, AccountType accountType, AccountStatus accountStatus);
+    List<Account> findAllByAccountTypeAndStatus(AccountType accountType, AccountStatus accountStatus);
 }

@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://127.0.0.1:5432/rashod_java
+    url: jdbc:postgresql://127.0.0.1:5433/rashod_java
     username: postgres
     password: p123
   liquibase:
