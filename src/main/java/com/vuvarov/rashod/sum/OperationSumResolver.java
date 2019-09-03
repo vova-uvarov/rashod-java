@@ -19,7 +19,7 @@ public class OperationSumResolver {
         }
 
         if (operation.getOperationType().equals(OperationType.TRANSFER)) {
-            if (operation.getAccountToTransferId().equals(accountId)){ // Перевод на этот счет
+            if (operation.getAccountToTransfer().getId().equals(accountId)){ // Перевод на этот счет
                 return operation.getCurrencyCost();
             }
             return operation.getCurrencyCost().negate();

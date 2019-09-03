@@ -1,5 +1,6 @@
 package com.vuvarov.rashod.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.vuvarov.rashod.model.enums.OperationType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,10 +17,14 @@ import java.util.List;
 public class Operation extends Model {
 
     Long parentId;
-    Long accountId;
 
-    // todo Счет куда переводятся деньги, используется только в операциях типа перевод. Наверное нужно наследование
-    Long accountToTransferId;
+    @OneToOne
+    @JoinColumn(name = "accountId")
+    Account account;
+
+    @OneToOne
+    @JoinColumn(name = "accountToTransferId")
+    Account accountToTransfer;
 
     @OneToOne
     @JoinColumn(name = "categoryId")
@@ -54,5 +59,6 @@ public class Operation extends Model {
     OperationType operationType;
 
     @Column(columnDefinition = "TIMESTAMP")
+    @JsonFormat(pattern="yyyy-MM-dd")
     LocalDateTime operationDate;
 }
