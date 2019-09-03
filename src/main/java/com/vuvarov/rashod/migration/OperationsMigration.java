@@ -39,7 +39,7 @@ public class OperationsMigration {
 
     @Value(value = "classpath:migration/operations.csv")
     private Resource operationsFile;
-    private Map<String, Long> name2AccountId;
+    private Map<String, Account> name2Account;
     private Map<String, Category> name2CategoryId;
 
     private final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -85,19 +85,19 @@ public class OperationsMigration {
     }
 
     private void loadAccounts() {
-        name2AccountId = StreamSupport.stream(accountRepository.findAll().spliterator(), false)
-                .collect(Collectors.toMap(Account::getName, Model::getId));
+        name2Account = StreamSupport.stream(accountRepository.findAll().spliterator(), false)
+                .collect(Collectors.toMap(Account::getName, Function.identity()));
     }
 
     private void toModel(OperationDto dto) {
         Operation result = new Operation();
         result.setComment(dto.getComment());
-        Long accountId = name2AccountId.get(dto.getAccountName());
-        if (accountId == null) {
+        Account account = name2Account.get(dto.getAccountName());
+        if (account == null) {
             throw new IllegalStateException("account not found with name: " + dto.getAccountName());
         }
-        result.setAccountId(accountId);
-        result.setAccountToTransferId(name2AccountId.get(dto.getAccountToTransferName()));
+        result.setAccount(account);
+        result.setAccountToTransfer(name2Account.get(dto.getAccountToTransferName()));
         Category category = name2CategoryId.get(dto.getCategory());
         if (category == null) {
             throw new IllegalStateException("category not found with name: " + dto.getCategory());
