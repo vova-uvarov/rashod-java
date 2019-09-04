@@ -5,3 +5,5 @@ spring:
     password: p123
   liquibase:
     drop-first: true
+  jpa:
+    show-sql: true

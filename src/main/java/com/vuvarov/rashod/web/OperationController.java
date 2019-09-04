@@ -3,33 +3,29 @@ package com.vuvarov.rashod.web;
 import com.vuvarov.rashod.model.Operation;
 import com.vuvarov.rashod.model.enums.OperationType;
 import com.vuvarov.rashod.repository.OperationRepository;
+import com.vuvarov.rashod.service.IOperationService;
 import com.vuvarov.rashod.web.dto.OperationFilterDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Arrays;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/operations")
 @RequiredArgsConstructor
 public class OperationController extends RestRepositoryController<Operation, Long, OperationRepository> {
 
+    private final IOperationService operationService;
+
     @GetMapping("/search")
-    Page<Operation> search(OperationFilterDto filterDto, @PageableDefault(sort = "operationDate", direction = Sort.Direction.DESC) Pageable pageable) {
-        List<OperationType> operationTypes = filterDto.getOperationTypes();
-        if (CollectionUtils.isEmpty(operationTypes)){
-            operationTypes= Arrays.asList(OperationType.values());
-        }
-        return repository.findAllByOperationTypeInAndPlan(operationTypes, filterDto.getIsPlan(), pageable);
+    Page<Operation> search(OperationFilterDto filterDto,
+                           @PageableDefault(sort = "operationDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        return operationService.search(filterDto, pageable);
     }
 
     @Override
