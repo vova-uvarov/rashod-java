@@ -1,15 +1,22 @@
 package com.vuvarov.rashod.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.vuvarov.rashod.model.enums.OperationType;
+import com.vuvarov.rashod.util.LocalDate2LocalDateTimeDeserializer;
+import com.vuvarov.rashod.util.LocalDateTime2DateSerializer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 //todo возможно стоит сделать наследование (хотя и хранить в одной таблице)
@@ -61,5 +68,7 @@ public class Operation extends Model {
     OperationType operationType;
 
     @Column(columnDefinition = "TIMESTAMP")
+    @JsonSerialize(using = LocalDateTime2DateSerializer.class)
+    @JsonDeserialize(using = LocalDate2LocalDateTimeDeserializer.class)
     LocalDateTime operationDate;
 }
