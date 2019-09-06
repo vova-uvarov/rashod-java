@@ -1,14 +1,19 @@
 package com.vuvarov.rashod.web.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.vuvarov.rashod.model.enums.AccountType;
 import com.vuvarov.rashod.model.enums.Currency;
 import com.vuvarov.rashod.model.enums.OperationType;
+import com.vuvarov.rashod.util.LocalDate2LocalDateTimeDeserializer;
+import com.vuvarov.rashod.util.LocalDateTime2DateSerializer;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -16,10 +21,11 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OperationFilterDto {
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    LocalDateTime dateFrom;
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    LocalDateTime dateTo;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    LocalDate dateFrom;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    LocalDate dateTo;
+
     BigDecimal costFrom;
     BigDecimal costTo;
     List<OperationType> operationTypes;

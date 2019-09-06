@@ -55,11 +55,11 @@ public class OperationSpecification implements Specification<Operation> {
             ));
         }
         if (filter.getDateFrom() != null) {
-            predicates.add(builder.greaterThanOrEqualTo(root.get("operationDate"), filter.getDateFrom()));
+            predicates.add(builder.greaterThanOrEqualTo(root.get("operationDate"), filter.getDateFrom().atStartOfDay()));
         }
 
         if (filter.getDateTo() != null) {
-            predicates.add(builder.lessThanOrEqualTo(root.get("operationDate"), filter.getDateTo()));
+            predicates.add(builder.lessThanOrEqualTo(root.get("operationDate"), filter.getDateTo().atStartOfDay()));
         }
 
         if (filter.getCurrency() != null) {
