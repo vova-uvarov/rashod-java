@@ -70,9 +70,7 @@ public class OperationSpecification implements Specification<Operation> {
         }
 
         boolean isPlan = BooleanUtils.isTrue(filter.getIsPlan());
-        if (isPlan) {
-            predicates.add(builder.equal(root.get("plan"),isPlan));
-        }
+        predicates.add(builder.equal(root.get("plan"), isPlan));
 
         if (filter.getCostFrom() != null || filter.getCostTo() != null) {
             Predicate costFromPredicate = null;
