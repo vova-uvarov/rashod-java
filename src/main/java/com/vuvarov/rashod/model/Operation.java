@@ -20,9 +20,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 //todo возможно стоит сделать наследование (хотя и хранить в одной таблице)
-@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
+@EqualsAndHashCode(callSuper = true)
 public class Operation extends Model {
 
     Long parentId;
