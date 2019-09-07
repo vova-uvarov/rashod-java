@@ -1,6 +1,9 @@
 package com.vuvarov.rashod.migration;
 
-import com.vuvarov.rashod.model.*;
+import com.vuvarov.rashod.model.Account;
+import com.vuvarov.rashod.model.Category;
+import com.vuvarov.rashod.model.Operation;
+import com.vuvarov.rashod.model.ShoppingItem;
 import com.vuvarov.rashod.model.dto.migration.OperationDto;
 import com.vuvarov.rashod.model.enums.OperationType;
 import com.vuvarov.rashod.repository.AccountRepository;
@@ -24,6 +27,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -72,7 +76,7 @@ public class OperationsMigration {
                     .parentId(parseParentId(record))
                     .currencyCost(extractCurrencyCost(record))
                     .build();
-                toModel(dto);
+            toModel(dto);
 
             log.info("record: {} ", dto);
         }
@@ -115,13 +119,14 @@ public class OperationsMigration {
         Operation savedOperation = operationRepository.save(result);
         String description = dto.getDescription();
         if (StringUtils.isNotBlank(description)) {
-            String[] shoppingLIst = description.split(",");
-            for (String item : shoppingLIst) {
-                ShoppingItem shoppingItem = new ShoppingItem();
-                shoppingItem.setName(item.trim());
-                shoppingItem.setOperationId(savedOperation.getId());
-                shoppingItemRepository.save(shoppingItem);
-            }
+            Pattern.compile(",").splitAsStream(description)
+                    .filter(StringUtils::isNotBlank)
+                    .map(s -> {
+                        ShoppingItem shoppingItem = new ShoppingItem();
+                        shoppingItem.setName(s.trim());
+                        shoppingItem.setOperationId(savedOperation.getId());
+                        return shoppingItem;
+                    }).forEach(shoppingItemRepository::save);
         }
     }
 
