@@ -1,13 +1,16 @@
 package com.vuvarov.rashod.service;
 
 import com.vuvarov.rashod.model.Operation;
+import com.vuvarov.rashod.model.ShoppingItem;
 import com.vuvarov.rashod.model.factory.OperationFactory;
 import com.vuvarov.rashod.processor.IProcessor;
 import com.vuvarov.rashod.repository.OperationRepository;
+import com.vuvarov.rashod.repository.ShoppingItemRepository;
 import com.vuvarov.rashod.repository.specification.OperationSpecification;
 import com.vuvarov.rashod.web.dto.CreateOperationDto;
 import com.vuvarov.rashod.web.dto.OperationFilterDto;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +26,7 @@ import java.util.List;
 public class OperationService implements IOperationService {
 
     private final OperationRepository repository;
+    private final ShoppingItemRepository shoppingItemRepository;
     private final List<IProcessor<Operation>> processors;
 
     @Override
@@ -45,11 +49,11 @@ public class OperationService implements IOperationService {
                 Operation parentOperation = get(operation.getParentId());
                 BigDecimal newCost = parentOperation.getCost().subtract(operation.getCost());
                 parentOperation.setCost(newCost);
-                repository.save(parentOperation);
-                return repository.save(operation);
+                saveWithItems(parentOperation);
+                return saveWithItems(operation);
             }
 
-            Operation mainSavedOperation = repository.save(operation);
+            Operation mainSavedOperation = saveWithItems(operation);
             if (isRepeat) {
                 Long countRepeat = ObjectUtils.defaultIfNull(request.getCountRepeat(), 1L);
                 saveRepeats(mainSavedOperation, countRepeat);
@@ -57,7 +61,7 @@ public class OperationService implements IOperationService {
             return mainSavedOperation;
         }
 
-        return repository.save(operation);
+        return saveWithItems(operation);
     }
 
     @Override
@@ -79,8 +83,20 @@ public class OperationService implements IOperationService {
             operationForSave.setPlan(true);
             currentOperationDate = currentOperationDate.plusMonths(1);
             operationForSave.setOperationDate(currentOperationDate);
-            repository.save(operationForSave);
+            saveWithItems(operationForSave);
         }
+    }
+
+    private Operation saveWithItems(Operation operation) {
+        Operation savedOperation = repository.save(operation);
+        List<ShoppingItem> shoppingList = savedOperation.getShoppingList();
+        shoppingList.forEach(item -> item.setOperationId(savedOperation.getId()));
+        savedOperation.setShoppingList(toList(shoppingList));
+        return savedOperation;
+    }
+
+    private List<ShoppingItem> toList(List<ShoppingItem> shoppingList) {
+        return IterableUtils.toList(shoppingItemRepository.saveAll(shoppingList));
     }
 
     private boolean isCreate(CreateOperationDto request) {
