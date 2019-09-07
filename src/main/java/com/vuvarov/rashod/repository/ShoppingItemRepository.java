@@ -12,4 +12,7 @@ import java.util.List;
 public interface ShoppingItemRepository extends PagingAndSortingRepository<ShoppingItem, Long> {
     @Query("SELECT c FROM ShoppingItem c WHERE LOWER(c.name) LIKE LOWER(?1)")
     List<ShoppingItem> findAllByName(String q, Pageable pageable);
+
+    @Query("SELECT distinct c.name FROM ShoppingItem c order by c.name")
+    List<String> findAllNames();
 }
