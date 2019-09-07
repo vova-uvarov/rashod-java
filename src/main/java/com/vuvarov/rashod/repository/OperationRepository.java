@@ -12,7 +12,4 @@ import java.util.List;
 
 @Repository
 public interface OperationRepository extends PagingAndSortingRepository<Operation, Long>, JpaSpecificationExecutor<Operation> {
-    List<Operation> findAllByAccountIdOrAccountToTransferIdAndPlan(Long accountId, Long accotunToTransferId, boolean plan);
-
-    Page<Operation> findAllByOperationTypeInAndPlan(List<OperationType> operationTypes, boolean isPlan, Pageable pageable);
 }
