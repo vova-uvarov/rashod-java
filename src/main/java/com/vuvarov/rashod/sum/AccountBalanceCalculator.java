@@ -4,7 +4,9 @@ import com.vuvarov.rashod.model.Account;
 import com.vuvarov.rashod.model.Operation;
 import com.vuvarov.rashod.model.dto.AccountBalance;
 import com.vuvarov.rashod.service.IOperationService;
+import com.vuvarov.rashod.web.dto.OperationFilterDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -18,10 +20,14 @@ public class AccountBalanceCalculator implements ICalculator<Account, AccountBal
 
     @Override
     public AccountBalance calculate(Account account) {
-        List<Operation> operations = operationService.findAllOperations(account.getId(), false);
+        OperationFilterDto filterDto = new OperationFilterDto();
+        filterDto.setAccountId(account.getId());
+        filterDto.setIsPlan(false);
+
+        List<Operation> operations = operationService.search(filterDto, Pageable.unpaged()).getContent();
         BigDecimal result = operations.stream().
                 filter(operation -> !operation.isPlan())
-                .map(op->sumResolver.extractSum(op, account.getId()))
+                .map(op -> sumResolver.extractSum(op, account.getId()))
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
         return AccountBalance.builder()
