@@ -61,7 +61,7 @@ public class Operation extends Model {
 
     boolean plan;
 
-    String place;
+    String place; // todo думаю стоит сделать отдельной сущностью
     String author; // todo это будет пользователь
 
     @Enumerated(EnumType.STRING)

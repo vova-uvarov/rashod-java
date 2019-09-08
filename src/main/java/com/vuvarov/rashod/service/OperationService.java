@@ -90,8 +90,10 @@ public class OperationService implements IOperationService {
     private Operation saveWithItems(Operation operation) {
         Operation savedOperation = repository.save(operation);
         List<ShoppingItem> shoppingList = savedOperation.getShoppingList();
-        shoppingList.forEach(item -> item.setOperationId(savedOperation.getId()));
-        savedOperation.setShoppingList(toList(shoppingList));
+        if (shoppingList!=null) {
+            shoppingList.forEach(item -> item.setOperationId(savedOperation.getId()));
+            savedOperation.setShoppingList(toList(shoppingList));
+        }
         return savedOperation;
     }
 
