@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -21,7 +22,7 @@ public class AccountBalanceCalculator implements ICalculator<Account, AccountBal
     @Override
     public AccountBalance calculate(Account account) {
         OperationFilterDto filterDto = new OperationFilterDto();
-        filterDto.setAccountId(account.getId());
+        filterDto.setAccountIds(Collections.singletonList(account.getId()));
         filterDto.setIsPlan(false);
 
         List<Operation> operations = operationService.search(filterDto, Pageable.unpaged()).getContent();
