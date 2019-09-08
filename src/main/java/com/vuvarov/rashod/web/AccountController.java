@@ -44,4 +44,9 @@ public class AccountController extends RestRepositoryController<Account, Long, A
     public BigDecimal totalBalance() {
         return accountService.totalBalance();
     }
+
+    @Override
+    public Page<Account> findAll(@PageableDefault(sort = "name") Pageable pageable) {
+        return super.findAll(pageable);
+    }
 }
