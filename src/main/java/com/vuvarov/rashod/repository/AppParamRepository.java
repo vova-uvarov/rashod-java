@@ -1,6 +1,6 @@
 package com.vuvarov.rashod.repository;
 
-import com.vuvarov.rashod.model.AppParam;
+import com.vuvarov.rashod.model.param.AppParam;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 

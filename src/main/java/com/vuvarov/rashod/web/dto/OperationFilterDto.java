@@ -1,6 +1,5 @@
 package com.vuvarov.rashod.web.dto;
 
-import com.vuvarov.rashod.model.ShoppingItem;
 import com.vuvarov.rashod.model.enums.AccountType;
 import com.vuvarov.rashod.model.enums.Currency;
 import com.vuvarov.rashod.model.enums.OperationType;
