@@ -1,6 +1,7 @@
 package com.vuvarov.rashod.repository.specification;
 
 import com.vuvarov.rashod.model.Operation;
+import com.vuvarov.rashod.model.ShoppingItem;
 import com.vuvarov.rashod.web.dto.OperationFilterDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.BooleanUtils;
@@ -14,6 +15,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
+
 @RequiredArgsConstructor
 public class OperationSpecification implements Specification<Operation> {
     private final OperationFilterDto filter;
@@ -23,12 +26,20 @@ public class OperationSpecification implements Specification<Operation> {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        if (filter.getAccountId() != null) {
+        if (isNotEmpty(filter.getShoppingList())) {
+            Join<Object, Object> shoppingListJoin = root.join("shoppingList", JoinType.LEFT);
+            List<String> shoppingList = filter.getShoppingList();
+            for (String shoppingItem : shoppingList) {
+                predicates.add(builder.like(builder.lower(shoppingListJoin.get("name")), "%" + shoppingItem + "%"));
+            }
+
+        }
+        if (isNotEmpty(filter.getAccountIds())) {
             Join<Object, Object> accountToTransferJoin = root.join("accountToTransfer", JoinType.LEFT);
             predicates.add(
                     builder.or(
-                            builder.equal(root.get("account").get("id"), filter.getAccountId()),
-                            builder.equal(accountToTransferJoin.get("id"), filter.getAccountId())
+                            root.get("account").get("id").in(filter.getAccountIds()),
+                            accountToTransferJoin.get("id").in(filter.getAccountIds())
                     ));
 
         }
@@ -36,8 +47,12 @@ public class OperationSpecification implements Specification<Operation> {
             predicates.add(builder.like(root.get("tags"), "%" + filter.getTag() + "%"));
         }
 
+        if (StringUtils.isNotBlank(filter.getComment())) {
+            predicates.add(builder.like(builder.lower(root.get("comment")), "%" + filter.getComment().toLowerCase() + "%"));
+        }
+
         if (StringUtils.isNotBlank(filter.getPlace())) {
-            predicates.add(builder.like(root.get("place"), "%" + filter.getPlace() + "%"));
+            predicates.add(builder.like(builder.lower(root.get("place")), "%" + filter.getPlace().toLowerCase() + "%"));
         }
 
         if (!CollectionUtils.isEmpty(filter.getCategoryIds())) {
