@@ -50,6 +50,10 @@ public class OperationsMigration {
 
     @PostConstruct
     public void migrate() throws IOException {
+        if (operationRepository.count()>0){
+            log.warn("skip migration. operations already exists");
+            return;
+        }
         loadAccounts();
         loadCategories();
 
