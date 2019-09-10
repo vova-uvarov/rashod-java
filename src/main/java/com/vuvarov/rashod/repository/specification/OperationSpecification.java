@@ -1,7 +1,6 @@
 package com.vuvarov.rashod.repository.specification;
 
 import com.vuvarov.rashod.model.Operation;
-import com.vuvarov.rashod.model.ShoppingItem;
 import com.vuvarov.rashod.web.dto.OperationFilterDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.BooleanUtils;
