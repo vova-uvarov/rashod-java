@@ -5,7 +5,9 @@ import com.vuvarov.rashod.model.enums.OperationType;
 import com.vuvarov.rashod.repository.OperationRepository;
 import com.vuvarov.rashod.web.dto.StatisticItemDto;
 import com.vuvarov.rashod.web.dto.Statistics;
+import com.vuvarov.rashod.web.dto.StatisticsFilterDto;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +19,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/statistics")
@@ -25,68 +28,33 @@ public class StatisticsController {
     private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MMM");
     private final OperationRepository operationRepository;
 
-    @GetMapping("/incomeConsumptionByMonthPrevious")
-    public Statistics incomeConsumptionByMonthLastPrevious() {
-        LocalDateTime firstOperationDate = operationRepository.minOperationDate();
-        LocalDate lastPeriodDate = LocalDate.now().minusYears(1).withDayOfMonth(1);
-
-        LocalDate firstDayInMonth = firstOperationDate.withDayOfMonth(1).toLocalDate();
-
+    @GetMapping("/incomeConsumptionByMonth")
+    public Statistics incomeConsumptionByMonthLastPrevious(StatisticsFilterDto filter) {
+        LocalDate firstDayInMonth = filter.getFrom().withDayOfMonth(1);
+        LocalDate endDate = filter.getTo().with(TemporalAdjusters.lastDayOfMonth());
         List<String> labels = new ArrayList<>();
-        List<StatisticItemDto> datasets = new ArrayList<>();
         List<BigDecimal> incomeData = new ArrayList<>();
         List<BigDecimal> consumptionData = new ArrayList<>();
 
-        while (firstDayInMonth.isBefore(lastPeriodDate)) {
+        while (firstDayInMonth.isBefore(endDate)) {
             labels.add(DF.format(firstDayInMonth));
 
             LocalDateTime dateFrom = firstDayInMonth.atStartOfDay();
             LocalDateTime dateTo = firstDayInMonth.with(TemporalAdjusters.lastDayOfMonth()).atStartOfDay();
-            List<Operation> operationForCurrentMonth = operationRepository.findAllByOperationDateBetween(dateFrom, dateTo);
+            List<Long> excludeCategoryIds = ObjectUtils.defaultIfNull(filter.getExcludeCategoryIds(), new ArrayList<>());
+
+            List<Operation> operationForCurrentMonth = operationRepository.findAllByOperationDateBetween(dateFrom, dateTo)
+                    .stream()
+                    .filter(op -> !excludeCategoryIds.contains(op.getCategory().getId()))
+                    .collect(Collectors.toList());
+
             incomeData.add(incomeSum(operationForCurrentMonth));
             consumptionData.add(consumptionSum(operationForCurrentMonth));
 
             firstDayInMonth = firstDayInMonth.plusMonths(1);
         }
 
-        datasets.add(StatisticItemDto.builder()
-                .name("Доход")
-                .data(incomeData)
-                .build());
-
-        datasets.add(StatisticItemDto.builder()
-                .name("Расход")
-                .data(consumptionData)
-                .build());
-
-        return Statistics.builder()
-                .labels(labels)
-                .datasets(datasets)
-                .build();
-    }
-
-    @GetMapping("/incomeConsumptionByMonthLastYear")
-    public Statistics incomeConsumptionByMonth() {
-        LocalDate now = LocalDate.now();
-        LocalDate firstDayInMonth = now.minusYears(1).withDayOfMonth(1);
-
-        List<String> labels = new ArrayList<>();
         List<StatisticItemDto> datasets = new ArrayList<>();
-        List<BigDecimal> incomeData = new ArrayList<>();
-        List<BigDecimal> consumptionData = new ArrayList<>();
-
-        while (firstDayInMonth.isBefore(now)) {
-            labels.add(DF.format(firstDayInMonth));
-
-            LocalDateTime dateFrom = firstDayInMonth.atStartOfDay();
-            LocalDateTime dateTo = firstDayInMonth.with(TemporalAdjusters.lastDayOfMonth()).atStartOfDay();
-            List<Operation> operationForCurrentMonth = operationRepository.findAllByOperationDateBetween(dateFrom, dateTo);
-            incomeData.add(incomeSum(operationForCurrentMonth));
-            consumptionData.add(consumptionSum(operationForCurrentMonth));
-
-            firstDayInMonth = firstDayInMonth.plusMonths(1);
-        }
-
         datasets.add(StatisticItemDto.builder()
                 .name("Доход")
                 .data(incomeData)
