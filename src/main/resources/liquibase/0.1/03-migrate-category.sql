@@ -44,3 +44,4 @@ INSERT INTO category(name, ins_time, modif_time) VALUES ('Спорт', '2015-05-
 INSERT INTO category(name, ins_time, modif_time) VALUES ('Уравнивание', '2013-02-23 00:00:00',now());
 INSERT INTO category(name, ins_time, modif_time) VALUES ('Фиктивный', '2014-03-11 10:29:03',now());
 INSERT INTO category(name, ins_time, modif_time) VALUES ('Ипотека', '2018-07-26 10:29:03',now());
+INSERT INTO category(name, ins_time, modif_time) VALUES ('Карманные деньги', '2018-07-26 10:29:03',now());
