@@ -9,10 +9,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
 public interface OperationRepository extends PagingAndSortingRepository<Operation, Long>, JpaSpecificationExecutor<Operation> {
     @Query("select distinct op.place from Operation op order by op.place")
-    List<String> getAllPlaces();
+    List<String> getAllPlaces();  // todo это можно кэшировать
+
+    List<Operation> findAllByOperationDateBetween(LocalDateTime dataFrom, LocalDateTime dateTo);
+
+    @Query("select min(op.operationDate) from Operation op")
+    LocalDateTime minOperationDate(); // todo это можно кэшировать
 }
