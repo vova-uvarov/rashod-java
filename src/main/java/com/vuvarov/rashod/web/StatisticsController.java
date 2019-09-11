@@ -21,13 +21,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.rmi.registry.LocateRegistry;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +39,39 @@ public class StatisticsController {
     private final AppParamRepository paramRepository;
     private final OperationRepository operationRepository;
     private final LabelFormatter labelFormatter;
+
+    @GetMapping("/averageByDayInCurrMonth")
+    public Statistics averageByDayInCurrMonth(StatisticsFilterDto filter) {
+        List<String> labels = new ArrayList<>();
+        List<BigDecimal> data = new ArrayList<>();
+        LocalDate currentCalcDate = LocalDate.now().withDayOfMonth(1);
+        List<Long> excludeCategoryIds = ObjectUtils.defaultIfNull(filter.getExcludeCategoryIds(), new ArrayList<>());
+
+        BigDecimal totalSum = BigDecimal.ZERO;
+        while (currentCalcDate.isBefore(LocalDate.now().plusDays(1))) {
+            labels.add(labelFormatter.format(currentCalcDate.atStartOfDay(), StatisticsGroupBy.DAY));
+            List<Operation> currentOperations = operationRepository.findAllByOperationDateGreaterThanEqualAndOperationDateLessThan(currentCalcDate.atStartOfDay(), currentCalcDate.atTime(LocalTime.MAX));
+            currentOperations = currentOperations.stream()
+                    .filter(op -> !excludeCategoryIds.contains(op.getCategory().getId()))// todo
+                    .filter(op -> !op.isPlan()) // todo
+                    .collect(Collectors.toList());
+            BigDecimal consumptionSum = consumptionSum(currentOperations);
+            totalSum = totalSum.add(consumptionSum);
+            data.add(totalSum.divide(BigDecimal.valueOf(currentCalcDate.getDayOfMonth()), HALF_DOWN));
+            currentCalcDate = currentCalcDate.plusDays(1);
+        }
+
+        List<StatisticItemDto> datasets = new ArrayList<>();
+        datasets.add(StatisticItemDto.builder()
+                .name("Динамика среднего расхода")
+                .data(data)
+                .build());
+
+        return Statistics.builder()
+                .labels(labels)
+                .datasets(datasets)
+                .build();
+    }
 
     @GetMapping("/plan/month")
     public MonthPlanDto monthPlan() {
