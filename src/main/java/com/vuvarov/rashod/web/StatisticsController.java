@@ -5,16 +5,19 @@ import com.vuvarov.rashod.model.enums.OperationType;
 import com.vuvarov.rashod.model.param.ParamGroup;
 import com.vuvarov.rashod.model.param.ParamKey;
 import com.vuvarov.rashod.repository.AppParamRepository;
-import com.vuvarov.rashod.repository.OperationRepository;
+import com.vuvarov.rashod.service.OperationService;
 import com.vuvarov.rashod.statistics.GroupByDateCalculator;
 import com.vuvarov.rashod.statistics.LabelFormatter;
+import com.vuvarov.rashod.web.dto.OperationFilterDto;
 import com.vuvarov.rashod.web.dto.StatisticItemDto;
 import com.vuvarov.rashod.web.dto.Statistics;
 import com.vuvarov.rashod.web.dto.statistics.MonthPlanDto;
 import com.vuvarov.rashod.web.dto.statistics.StatisticsFilterDto;
 import com.vuvarov.rashod.web.dto.statistics.StatisticsGroupBy;
+import com.vuvarov.rashod.web.dto.statistics.StatisticsPieData;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.util.Pair;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,12 +25,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.YearMonth;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.math.RoundingMode.HALF_DOWN;
@@ -37,8 +43,60 @@ import static java.math.RoundingMode.HALF_DOWN;
 @RequiredArgsConstructor
 public class StatisticsController {
     private final AppParamRepository paramRepository;
-    private final OperationRepository operationRepository;
+    private final OperationService operationService;
     private final LabelFormatter labelFormatter;
+
+    @GetMapping("/incomesByCategory")
+    public List<StatisticsPieData> incomesByCategory(StatisticsFilterDto filter) {
+//        todo стоит сделать пагинацию
+        List<Operation> operations = operationService.search(OperationFilterDto.builder()
+                .dateFrom(filter.getFrom())
+                .dateTo(filter.getTo())
+                .operationTypes(Collections.singletonList(OperationType.INCOME))
+                .isPlan(false)
+                .build(), Pageable.unpaged()).getContent();
+        Map<String, BigDecimal> sums = new HashMap<>();
+        operations.forEach(op -> {
+            String categoryName = op.getCategory().getName();
+            BigDecimal sumForCategory = sums.getOrDefault(categoryName, BigDecimal.ZERO);
+            sums.put(categoryName, sumForCategory.add(op.getCost()));
+        });
+
+        return sums.entrySet().stream()
+                .sorted(Collections.reverseOrder(Comparator.comparing(Map.Entry::getValue)))
+                .filter(entry->entry.getValue().compareTo(BigDecimal.ZERO)>0)
+                .map(entry -> StatisticsPieData.builder()
+                        .name(entry.getKey())
+                        .sum(entry.getValue())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/consumptionByCategory")
+    public List<StatisticsPieData> consumptionByCategory(StatisticsFilterDto filter) {
+//        todo стоит сделать пагинацию
+        List<Operation> operations = operationService.search(OperationFilterDto.builder()
+                .dateFrom(filter.getFrom())
+                .dateTo(filter.getTo())
+                .operationTypes(Collections.singletonList(OperationType.CONSUMPTION))
+                .isPlan(false)
+                .build(), Pageable.unpaged()).getContent();
+        Map<String, BigDecimal> sums = new HashMap<>();
+        operations.forEach(op -> {
+            String categoryName = op.getCategory().getName();
+            BigDecimal sumForCategory = sums.getOrDefault(categoryName, BigDecimal.ZERO);
+            sums.put(categoryName, sumForCategory.add(op.getCost()));
+        });
+
+        return sums.entrySet().stream()
+                .sorted(Collections.reverseOrder(Comparator.comparing(Map.Entry::getValue)))
+                .filter(entry->entry.getValue().compareTo(BigDecimal.ZERO)>0)
+                .map(entry -> StatisticsPieData.builder()
+                        .name(entry.getKey())
+                        .sum(entry.getValue())
+                        .build())
+                .collect(Collectors.toList());
+    }
 
     @GetMapping("/averageByDayInCurrMonth")
     public Statistics averageByDayInCurrMonth(StatisticsFilterDto filter) {
@@ -49,11 +107,11 @@ public class StatisticsController {
 
         BigDecimal totalSum = BigDecimal.ZERO;
         while (currentCalcDate.isBefore(LocalDate.now().plusDays(1))) {
-            labels.add(labelFormatter.format(currentCalcDate.atStartOfDay(), StatisticsGroupBy.DAY));
-            List<Operation> currentOperations = operationRepository.findAllByOperationDateGreaterThanEqualAndOperationDateLessThan(currentCalcDate.atStartOfDay(), currentCalcDate.atTime(LocalTime.MAX));
+            labels.add(labelFormatter.format(currentCalcDate, StatisticsGroupBy.DAY));
+            List<Operation> currentOperations = getOperations(currentCalcDate, currentCalcDate);
+
             currentOperations = currentOperations.stream()
                     .filter(op -> !excludeCategoryIds.contains(op.getCategory().getId()))// todo
-                    .filter(op -> !op.isPlan()) // todo
                     .collect(Collectors.toList());
             BigDecimal consumptionSum = consumptionSum(currentOperations);
             totalSum = totalSum.add(consumptionSum);
@@ -73,17 +131,23 @@ public class StatisticsController {
                 .build();
     }
 
+    private List<Operation> getOperations(LocalDate from, LocalDate to) {
+        return operationService.search(OperationFilterDto.builder()
+                .dateFrom(from)
+                .dateTo(to)
+                .isPlan(false)
+                .build(), Pageable.unpaged()).getContent();
+    }
+
     @GetMapping("/plan/month")
     public MonthPlanDto monthPlan() {
 //        private BigDecimal canSpend;
 //        private BigDecimal canSpendFroPlan;
         BigDecimal totalMonthPlan = paramRepository.findByGroupNameAndKeyName(ParamGroup.PLAN, ParamKey.SUM_TO_MONTH).getDecimalValue();
         YearMonth yearMonthObject = YearMonth.from(LocalDate.now());
-
-        List<Operation> currentOperations = operationRepository.findAllByOperationDateGreaterThanEqualAndOperationDateLessThan(LocalDate.now().withDayOfMonth(1).atStartOfDay(), LocalDate.now().with(TemporalAdjusters.lastDayOfMonth()).atTime(LocalTime.MAX));
+        List<Operation> currentOperations = getOperations(LocalDate.now().withDayOfMonth(1), LocalDate.now().with(TemporalAdjusters.lastDayOfMonth()));
         currentOperations = currentOperations.stream()
                 .filter(op -> !op.getCategory().getId().equals(15L)) // todo
-                .filter(op -> !op.isPlan()) // todo
                 .collect(Collectors.toList());
         BigDecimal consumptionSumInCurrentMonth = consumptionSum(currentOperations);
 //        var canBeSpent = (((SUM_TO_MONTH / countDayInCurrentMonth) - averageInCurrentMonth) * dayOfMonth);
@@ -109,12 +173,13 @@ public class StatisticsController {
         List<BigDecimal> incomeData = new ArrayList<>();
         List<BigDecimal> consumptionData = new ArrayList<>();
 
-        Pair<LocalDateTime, LocalDateTime> interval = calculator.nextDate();
+        Pair<LocalDate, LocalDate> interval = calculator.nextDate();
         while (interval != null) {
             labels.add(labelFormatter.format(interval.getFirst(), filter.getGroupBy()));
             List<Long> excludeCategoryIds = ObjectUtils.defaultIfNull(filter.getExcludeCategoryIds(), new ArrayList<>());
 
-            List<Operation> operationForCurrentMonth = operationRepository.findAllByOperationDateGreaterThanEqualAndOperationDateLessThan(interval.getFirst(), interval.getSecond())
+            List<Operation> operationForCurrentMonth = getOperations(interval.getFirst(), interval.getSecond());
+            operationForCurrentMonth = operationForCurrentMonth
                     .stream()
                     .filter(op -> !excludeCategoryIds.contains(op.getCategory().getId()))
                     .collect(Collectors.toList());

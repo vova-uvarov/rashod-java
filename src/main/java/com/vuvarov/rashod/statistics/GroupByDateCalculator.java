@@ -4,8 +4,6 @@ import com.vuvarov.rashod.web.dto.statistics.StatisticsGroupBy;
 import org.springframework.data.util.Pair;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
 
 public class GroupByDateCalculator {
@@ -21,10 +19,10 @@ public class GroupByDateCalculator {
     }
 
 
-    public Pair<LocalDateTime, LocalDateTime> nextDate() {
+    public Pair<LocalDate, LocalDate> nextDate() {
         if (currentDate == null) {
             currentDate = firstDate;
-            return Pair.of(currentDate.atStartOfDay(), endDate(currentDate).atTime(LocalTime.MAX));
+            return Pair.of(currentDate, endDate(currentDate));
         }
         if (currentDate.isAfter(endDate)) {
             return null;
@@ -37,7 +35,7 @@ public class GroupByDateCalculator {
         } else {
             currentDate = currentDate.plusMonths(1);
         }
-        return Pair.of(currentDate.atStartOfDay(), endDate(currentDate).atTime(LocalTime.MAX));
+        return Pair.of(currentDate, endDate(currentDate));
     }
 
     private LocalDate firstDate(LocalDate date) {

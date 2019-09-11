@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.criteria.*;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -73,7 +74,7 @@ public class OperationSpecification implements Specification<Operation> {
         }
 
         if (filter.getDateTo() != null) {
-            predicates.add(builder.lessThanOrEqualTo(root.get("operationDate"), filter.getDateTo().atStartOfDay()));
+            predicates.add(builder.lessThanOrEqualTo(root.get("operationDate"), filter.getDateTo().atTime(LocalTime.MAX)));
         }
 
         if (filter.getCurrency() != null) {
