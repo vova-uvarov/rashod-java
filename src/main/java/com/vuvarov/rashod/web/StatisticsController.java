@@ -2,11 +2,15 @@ package com.vuvarov.rashod.web;
 
 import com.vuvarov.rashod.model.Operation;
 import com.vuvarov.rashod.model.enums.OperationType;
+import com.vuvarov.rashod.model.param.ParamGroup;
+import com.vuvarov.rashod.model.param.ParamKey;
+import com.vuvarov.rashod.repository.AppParamRepository;
 import com.vuvarov.rashod.repository.OperationRepository;
 import com.vuvarov.rashod.statistics.GroupByDateCalculator;
 import com.vuvarov.rashod.statistics.LabelFormatter;
 import com.vuvarov.rashod.web.dto.StatisticItemDto;
 import com.vuvarov.rashod.web.dto.Statistics;
+import com.vuvarov.rashod.web.dto.statistics.MonthPlanDto;
 import com.vuvarov.rashod.web.dto.statistics.StatisticsFilterDto;
 import com.vuvarov.rashod.web.dto.statistics.StatisticsGroupBy;
 import lombok.RequiredArgsConstructor;
@@ -17,23 +21,58 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.rmi.registry.LocateRegistry;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.math.RoundingMode.HALF_DOWN;
+
 @RestController
 @RequestMapping("/api/statistics")
 @RequiredArgsConstructor
 public class StatisticsController {
+    private final AppParamRepository paramRepository;
     private final OperationRepository operationRepository;
     private final LabelFormatter labelFormatter;
 
+    @GetMapping("/plan/month")
+    public MonthPlanDto monthPlan() {
+//        private BigDecimal canSpend;
+//        private BigDecimal canSpendFroPlan;
+        BigDecimal totalMonthPlan = paramRepository.findByGroupNameAndKeyName(ParamGroup.PLAN, ParamKey.SUM_TO_MONTH).getDecimalValue();
+        YearMonth yearMonthObject = YearMonth.from(LocalDate.now());
+
+        List<Operation> currentOperations = operationRepository.findAllByOperationDateGreaterThanEqualAndOperationDateLessThan(LocalDate.now().withDayOfMonth(1).atStartOfDay(), LocalDate.now().with(TemporalAdjusters.lastDayOfMonth()).atTime(LocalTime.MAX));
+        currentOperations = currentOperations.stream()
+                .filter(op -> !op.getCategory().getId().equals(15L)) // todo
+                .filter(op -> !op.isPlan()) // todo
+                .collect(Collectors.toList());
+        BigDecimal consumptionSumInCurrentMonth = consumptionSum(currentOperations);
+//        var canBeSpent = (((SUM_TO_MONTH / countDayInCurrentMonth) - averageInCurrentMonth) * dayOfMonth);
+        BigDecimal dayOfMonth = BigDecimal.valueOf(LocalDate.now().getDayOfMonth());
+        BigDecimal daysInMonth = BigDecimal.valueOf(yearMonthObject.lengthOfMonth());
+        BigDecimal currentAverageSum = consumptionSumInCurrentMonth.divide(dayOfMonth, HALF_DOWN);
+//        def spendNoMoreThan = (SUM_TO_MONTH - sumCurMonth) / (countDayInCurrentMonth - dayOfMonth + 1);
+        BigDecimal planAverageSum = totalMonthPlan.divide(daysInMonth, HALF_DOWN);
+        return MonthPlanDto.builder()
+                .totalPlan(totalMonthPlan)
+                .planForDay(planAverageSum)
+                .currentAverageSum(currentAverageSum)
+                .canSpent(planAverageSum.subtract(currentAverageSum).multiply(dayOfMonth))
+                .canSpendForPlan(totalMonthPlan.subtract(consumptionSumInCurrentMonth).divide(daysInMonth.subtract(dayOfMonth).add(BigDecimal.ONE), HALF_DOWN))
+                .build();
+    }
+
     @GetMapping("/incomeConsumptionByGroup")
-    public Statistics incomeConsumptionByMonthLastPrevious(StatisticsFilterDto filter) {
+    public Statistics incomeConsumptionByGroup(StatisticsFilterDto filter) {
         GroupByDateCalculator calculator = new GroupByDateCalculator(filter.getFrom(), filter.getTo(), filter.getGroupBy());
 
         List<String> labels = new ArrayList<>();
@@ -45,7 +84,7 @@ public class StatisticsController {
             labels.add(labelFormatter.format(interval.getFirst(), filter.getGroupBy()));
             List<Long> excludeCategoryIds = ObjectUtils.defaultIfNull(filter.getExcludeCategoryIds(), new ArrayList<>());
 
-            List<Operation> operationForCurrentMonth = operationRepository.findAllByOperationDateBetween(interval.getFirst(), interval.getSecond())
+            List<Operation> operationForCurrentMonth = operationRepository.findAllByOperationDateGreaterThanEqualAndOperationDateLessThan(interval.getFirst(), interval.getSecond())
                     .stream()
                     .filter(op -> !excludeCategoryIds.contains(op.getCategory().getId()))
                     .collect(Collectors.toList());
