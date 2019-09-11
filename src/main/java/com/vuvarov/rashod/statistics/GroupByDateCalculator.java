@@ -53,7 +53,7 @@ public class GroupByDateCalculator {
 
     private LocalDate endDate(LocalDate date) {
         if (StatisticsGroupBy.DAY.equals(groupBy)) {
-            return date.plusDays(1);
+            return date;
         }
 
         if (StatisticsGroupBy.YEAR.equals(groupBy)) {
