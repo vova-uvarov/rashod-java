@@ -4,7 +4,10 @@ import com.vuvarov.rashod.model.enums.AccountType;
 import com.vuvarov.rashod.model.enums.Currency;
 import com.vuvarov.rashod.model.enums.OperationType;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -14,6 +17,9 @@ import java.util.List;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class OperationFilterDto {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
