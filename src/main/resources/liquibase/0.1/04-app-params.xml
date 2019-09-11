@@ -8,7 +8,7 @@
             <column name="group_name" value="PLAN"/>
             <column name="key_name" value="SUM_TO_MONTH"/>
             <column name="name" value="План на месяц"/>
-            <column name="number_value" valueNumeric="60000"/>
+            <column name="decimal_value" valueNumeric="68000"/>
             <column name="ins_time" valueDate="now()"/>
             <column name="modif_time" valueDate="now()"/>
         </insert>

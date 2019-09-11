@@ -18,7 +18,7 @@ public interface OperationRepository extends PagingAndSortingRepository<Operatio
     @Query("select distinct op.place from Operation op order by op.place")
     List<String> getAllPlaces();  // todo это можно кэшировать
 
-    List<Operation> findAllByOperationDateBetween(LocalDateTime dataFrom, LocalDateTime dateTo);
+    List<Operation> findAllByOperationDateGreaterThanEqualAndOperationDateLessThan(LocalDateTime dataFrom, LocalDateTime dateTo);
 
     @Query("select min(op.operationDate) from Operation op")
     LocalDateTime minOperationDate(); // todo это можно кэшировать
