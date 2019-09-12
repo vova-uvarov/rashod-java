@@ -1,4 +1,4 @@
-package com.vuvarov.rashod.web.dto;
+package com.vuvarov.rashod.web.dto.statistics;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,5 +15,5 @@ import java.util.List;
 public class StatisticDataSet {
     private String code;
     private String name;
-    private List<BigDecimal> data;
+    private List<BigDecimal> data; // todo для pie просто используем одно значение. Подумать над этим
 }

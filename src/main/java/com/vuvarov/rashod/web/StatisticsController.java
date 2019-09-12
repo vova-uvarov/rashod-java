@@ -6,16 +6,15 @@ import com.vuvarov.rashod.model.param.ParamGroup;
 import com.vuvarov.rashod.model.param.ParamKey;
 import com.vuvarov.rashod.repository.AppParamRepository;
 import com.vuvarov.rashod.service.OperationService;
+import com.vuvarov.rashod.service.interfaces.IStatisticsService;
 import com.vuvarov.rashod.statistics.LabelFormatter;
-import com.vuvarov.rashod.statistics.StatisticsService;
 import com.vuvarov.rashod.statistics.dto.GroupByDateCalculator;
 import com.vuvarov.rashod.web.dto.OperationFilterDto;
-import com.vuvarov.rashod.web.dto.StatisticDataSet;
-import com.vuvarov.rashod.web.dto.Statistics;
 import com.vuvarov.rashod.web.dto.statistics.MonthPlanDto;
+import com.vuvarov.rashod.web.dto.statistics.StatisticDataSet;
+import com.vuvarov.rashod.web.dto.statistics.Statistics;
 import com.vuvarov.rashod.web.dto.statistics.StatisticsFilterDto;
 import com.vuvarov.rashod.web.dto.statistics.StatisticsGroupBy;
-import com.vuvarov.rashod.web.dto.statistics.StatisticsPieData;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Pageable;
@@ -30,11 +29,7 @@ import java.time.YearMonth;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.math.RoundingMode.HALF_DOWN;
@@ -46,7 +41,7 @@ public class StatisticsController {
     private final AppParamRepository paramRepository;
     private final OperationService operationService;
     private final LabelFormatter labelFormatter;
-    private final StatisticsService statisticsService;
+    private final IStatisticsService statisticsService;
 
     @GetMapping("/averageByYearTrend")
     public Statistics averageByYearTrend(StatisticsFilterDto filter) {
@@ -99,30 +94,8 @@ public class StatisticsController {
     }
 
     @GetMapping("/sumsByCategory")
-    public List<StatisticsPieData> sumsByCategory(StatisticsFilterDto filter) {
-        normalizeFilter(filter);
-//        todo стоит сделать пагинацию
-        List<Operation> operations = operationService.search(OperationFilterDto.builder()
-                .dateFrom(filter.getFrom())
-                .dateTo(filter.getTo())
-                .operationTypes(filter.getOperationTypes())
-                .isPlan(false)
-                .build(), Pageable.unpaged()).getContent();
-        Map<String, BigDecimal> sums = new HashMap<>();
-        operations.forEach(op -> {
-            String categoryName = op.getCategory().getName();
-            BigDecimal sumForCategory = sums.getOrDefault(categoryName, BigDecimal.ZERO);
-            sums.put(categoryName, sumForCategory.add(op.getCost()));
-        });
-
-        return sums.entrySet().stream()
-                .sorted(Collections.reverseOrder(Comparator.comparing(Map.Entry::getValue)))
-                .filter(entry -> entry.getValue().compareTo(BigDecimal.ZERO) > 0)
-                .map(entry -> StatisticsPieData.builder()
-                        .name(entry.getKey())
-                        .sum(entry.getValue())
-                        .build())
-                .collect(Collectors.toList());
+    public List<StatisticDataSet> sumsByCategory(StatisticsFilterDto filter) {
+        return statisticsService.sumsByCategory(filter);
     }
 
 

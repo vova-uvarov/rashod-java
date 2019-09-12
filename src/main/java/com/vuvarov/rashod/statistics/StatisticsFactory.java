@@ -1,7 +1,7 @@
 package com.vuvarov.rashod.statistics;
 
-import com.vuvarov.rashod.web.dto.StatisticDataSet;
-import com.vuvarov.rashod.web.dto.Statistics;
+import com.vuvarov.rashod.web.dto.statistics.StatisticDataSet;
+import com.vuvarov.rashod.web.dto.statistics.Statistics;
 
 import java.math.BigDecimal;
 import java.util.List;
