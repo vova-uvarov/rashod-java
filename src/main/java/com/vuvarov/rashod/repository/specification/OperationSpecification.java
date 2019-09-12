@@ -74,7 +74,7 @@ public class OperationSpecification implements Specification<Operation> {
         }
 
         if (filter.getDateTo() != null) {
-            predicates.add(builder.lessThanOrEqualTo(root.get("operationDate"), filter.getDateTo().atTime(LocalTime.MAX)));
+            predicates.add(builder.lessThan(root.get("operationDate"), filter.getDateTo().atTime(LocalTime.MAX)));
         }
 
         if (filter.getCurrency() != null) {
