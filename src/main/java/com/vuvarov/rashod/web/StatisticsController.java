@@ -27,13 +27,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.math.RoundingMode.HALF_DOWN;
@@ -46,13 +40,59 @@ public class StatisticsController {
     private final OperationService operationService;
     private final LabelFormatter labelFormatter;
 
-    @GetMapping("/incomesByCategory")
-    public List<StatisticsPieData> incomesByCategory(StatisticsFilterDto filter) {
+    @GetMapping("/categoryTrend")
+    public Statistics categoryTrend(StatisticsFilterDto filter) {
+        normalizeFilter(filter);
+        GroupByDateCalculator calculator = new GroupByDateCalculator(filter.getFrom(), filter.getTo(), StatisticsGroupBy.YEAR);
+
+        List<String> labels = new ArrayList<>();
+
+        Pair<LocalDate, LocalDate> interval = calculator.nextDate();
+        List<Long> excludeCategoryIds = ObjectUtils.defaultIfNull(filter.getExcludeCategoryIds(), new ArrayList<>());
+        List<StatisticItemDto> datasets = new ArrayList<>();
+        while (interval != null) {
+            GroupByDateCalculator monthCalculator = new GroupByDateCalculator(interval.getFirst(), interval.getSecond(), StatisticsGroupBy.MONTH);
+            Pair<LocalDate, LocalDate> monthInterval = monthCalculator.nextDate();
+            List<BigDecimal> yearData = new ArrayList<>();
+            labels = Arrays.asList("Янв","Фер","Март","Апр","Ма","Июнь","Июль","Авг","Сен","Окт","Нояб","Дек");
+            while (monthInterval != null) {
+                List<Operation> operationForCurrentMonth = operationService.search(OperationFilterDto.builder()
+                        .dateFrom(monthInterval.getFirst())
+                        .dateTo(monthInterval.getSecond())
+                        .categoryIds(filter.getIncludeCategoryIds())
+                        .isPlan(false)
+                        .build(), Pageable.unpaged()).getContent();
+
+                operationForCurrentMonth = operationForCurrentMonth
+                        .stream()
+                        .filter(op -> !excludeCategoryIds.contains(op.getCategory().getId()))
+                        .collect(Collectors.toList());
+                yearData.add(consumptionSum(operationForCurrentMonth));
+
+                monthInterval = monthCalculator.nextDate();
+            }
+            datasets.add(StatisticItemDto.builder()
+                    .name(String.valueOf(interval.getFirst().getYear()))
+                    .data(yearData)
+                    .build());
+
+            interval = calculator.nextDate();
+        }
+
+        return Statistics.builder()
+                .labels(labels)
+                .datasets(datasets)
+                .build();
+    }
+
+    @GetMapping("/sumsByCategory")
+    public List<StatisticsPieData> sumsByCategory(StatisticsFilterDto filter) {
+        normalizeFilter(filter);
 //        todo стоит сделать пагинацию
         List<Operation> operations = operationService.search(OperationFilterDto.builder()
                 .dateFrom(filter.getFrom())
                 .dateTo(filter.getTo())
-                .operationTypes(Collections.singletonList(OperationType.INCOME))
+                .operationTypes(filter.getOperationTypes())
                 .isPlan(false)
                 .build(), Pageable.unpaged()).getContent();
         Map<String, BigDecimal> sums = new HashMap<>();
@@ -64,7 +104,7 @@ public class StatisticsController {
 
         return sums.entrySet().stream()
                 .sorted(Collections.reverseOrder(Comparator.comparing(Map.Entry::getValue)))
-                .filter(entry->entry.getValue().compareTo(BigDecimal.ZERO)>0)
+                .filter(entry -> entry.getValue().compareTo(BigDecimal.ZERO) > 0)
                 .map(entry -> StatisticsPieData.builder()
                         .name(entry.getKey())
                         .sum(entry.getValue())
@@ -72,34 +112,10 @@ public class StatisticsController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/consumptionByCategory")
-    public List<StatisticsPieData> consumptionByCategory(StatisticsFilterDto filter) {
-//        todo стоит сделать пагинацию
-        List<Operation> operations = operationService.search(OperationFilterDto.builder()
-                .dateFrom(filter.getFrom())
-                .dateTo(filter.getTo())
-                .operationTypes(Collections.singletonList(OperationType.CONSUMPTION))
-                .isPlan(false)
-                .build(), Pageable.unpaged()).getContent();
-        Map<String, BigDecimal> sums = new HashMap<>();
-        operations.forEach(op -> {
-            String categoryName = op.getCategory().getName();
-            BigDecimal sumForCategory = sums.getOrDefault(categoryName, BigDecimal.ZERO);
-            sums.put(categoryName, sumForCategory.add(op.getCost()));
-        });
-
-        return sums.entrySet().stream()
-                .sorted(Collections.reverseOrder(Comparator.comparing(Map.Entry::getValue)))
-                .filter(entry->entry.getValue().compareTo(BigDecimal.ZERO)>0)
-                .map(entry -> StatisticsPieData.builder()
-                        .name(entry.getKey())
-                        .sum(entry.getValue())
-                        .build())
-                .collect(Collectors.toList());
-    }
 
     @GetMapping("/averageByDayInCurrMonth")
     public Statistics averageByDayInCurrMonth(StatisticsFilterDto filter) {
+        normalizeFilter(filter);
         List<String> labels = new ArrayList<>();
         List<BigDecimal> data = new ArrayList<>();
         LocalDate currentCalcDate = LocalDate.now().withDayOfMonth(1);
@@ -131,7 +147,7 @@ public class StatisticsController {
                 .build();
     }
 
-    private List<Operation> getOperations(LocalDate from, LocalDate to) {
+    private List<Operation> getOperations(LocalDate from, LocalDate to) { // todo Должен поидеи фильтр принимать
         return operationService.search(OperationFilterDto.builder()
                 .dateFrom(from)
                 .dateTo(to)
@@ -167,6 +183,7 @@ public class StatisticsController {
 
     @GetMapping("/incomeConsumptionByGroup")
     public Statistics incomeConsumptionByGroup(StatisticsFilterDto filter) {
+        normalizeFilter(filter);
         GroupByDateCalculator calculator = new GroupByDateCalculator(filter.getFrom(), filter.getTo(), filter.getGroupBy());
 
         List<String> labels = new ArrayList<>();
@@ -221,5 +238,16 @@ public class StatisticsController {
                 .filter(op -> !op.isPlan())
                 .map(Operation::getCost)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+
+    private void normalizeFilter(StatisticsFilterDto filter) {
+        if (filter.getTo() == null) {
+            filter.setTo(LocalDate.now());
+        }
+
+        if (filter.getFrom() == null) {
+            filter.setFrom(operationService.minOperationDate().toLocalDate());
+        }
     }
 }

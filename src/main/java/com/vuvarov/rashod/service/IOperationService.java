@@ -6,7 +6,11 @@ import com.vuvarov.rashod.web.dto.OperationFilterDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
+
 public interface IOperationService {
+
+    LocalDateTime minOperationDate();
 
     Page<Operation> search(OperationFilterDto filter, Pageable pageable);
 

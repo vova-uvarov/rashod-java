@@ -1,5 +1,6 @@
 package com.vuvarov.rashod.web.dto.statistics;
 
+import com.vuvarov.rashod.model.enums.OperationType;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -14,6 +15,9 @@ public class StatisticsFilterDto {
     LocalDate to;
 
     List<Long> excludeCategoryIds;
+    List<Long> includeCategoryIds;
+
+    List<OperationType> operationTypes;
 
     StatisticsGroupBy groupBy;
 }
