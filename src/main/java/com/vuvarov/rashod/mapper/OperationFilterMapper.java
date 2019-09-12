@@ -23,6 +23,7 @@ public class OperationFilterMapper {
         filter.setCategoryIds(source.getIncludeCategoryIds());
         filter.setExcludeCategoryIds(source.getExcludeCategoryIds());
         filter.setIsPlan(BooleanUtils.isTrue(source.getIsPlan()));
+        filter.setOperationTypes(source.getOperationTypes());
 
         return filter;
     }

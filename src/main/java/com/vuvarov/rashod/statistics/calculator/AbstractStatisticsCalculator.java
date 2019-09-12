@@ -8,13 +8,14 @@ import com.vuvarov.rashod.statistics.StatisticsFactory;
 import com.vuvarov.rashod.statistics.dto.GroupByDateCalculator;
 import com.vuvarov.rashod.util.StatisticsUtil;
 import com.vuvarov.rashod.web.dto.OperationFilterDto;
-import com.vuvarov.rashod.web.dto.StatisticDataSet;
-import com.vuvarov.rashod.web.dto.Statistics;
+import com.vuvarov.rashod.web.dto.statistics.StatisticDataSet;
+import com.vuvarov.rashod.web.dto.statistics.Statistics;
 import com.vuvarov.rashod.web.dto.statistics.StatisticsFilterDto;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
