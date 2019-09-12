@@ -1,25 +1,22 @@
 package com.vuvarov.rashod.web;
 
-import com.vuvarov.rashod.model.Category;
 import com.vuvarov.rashod.model.Operation;
 import com.vuvarov.rashod.model.enums.OperationType;
 import com.vuvarov.rashod.model.param.ParamGroup;
 import com.vuvarov.rashod.model.param.ParamKey;
 import com.vuvarov.rashod.repository.AppParamRepository;
-import com.vuvarov.rashod.repository.CategoryRepository;
 import com.vuvarov.rashod.service.OperationService;
-import com.vuvarov.rashod.statistics.GroupByDateCalculator;
 import com.vuvarov.rashod.statistics.LabelFormatter;
+import com.vuvarov.rashod.statistics.StatisticsService;
+import com.vuvarov.rashod.statistics.dto.GroupByDateCalculator;
 import com.vuvarov.rashod.web.dto.OperationFilterDto;
-import com.vuvarov.rashod.web.dto.StatisticItemDto;
+import com.vuvarov.rashod.web.dto.StatisticDataSet;
 import com.vuvarov.rashod.web.dto.Statistics;
 import com.vuvarov.rashod.web.dto.statistics.MonthPlanDto;
 import com.vuvarov.rashod.web.dto.statistics.StatisticsFilterDto;
 import com.vuvarov.rashod.web.dto.statistics.StatisticsGroupBy;
 import com.vuvarov.rashod.web.dto.statistics.StatisticsPieData;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.util.Pair;
@@ -41,7 +38,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.math.RoundingMode.HALF_DOWN;
-import static java.util.Collections.singletonList;
 
 @RestController
 @RequestMapping("/api/statistics")
@@ -49,49 +45,12 @@ import static java.util.Collections.singletonList;
 public class StatisticsController {
     private final AppParamRepository paramRepository;
     private final OperationService operationService;
-    private final CategoryRepository categoryRepository;
     private final LabelFormatter labelFormatter;
+    private final StatisticsService statisticsService;
 
     @GetMapping("/averageByYearTrend")
     public Statistics averageByYearTrend(StatisticsFilterDto filter) {
-        GroupByDateCalculator calculator = new GroupByDateCalculator(operationService.minOperationDate().toLocalDate(), LocalDate.now(), StatisticsGroupBy.YEAR);
-        List<String> labels = new ArrayList<>();
-        LocalDate now = LocalDate.now();
-        Pair<LocalDate, LocalDate> interval = calculator.nextDate();
-        List<BigDecimal> data = new ArrayList<>();
-        while (interval != null) {
-            labels.add(labelFormatter.format(interval.getFirst(), StatisticsGroupBy.YEAR));
-            List<Operation> operations = operationService.search(OperationFilterDto.builder()
-                    .dateFrom(interval.getFirst())
-                    .dateTo(interval.getSecond())
-                    .categoryIds(filter.getIncludeCategoryIds())
-                    .isPlan(false)
-                    .build(), Pageable.unpaged()).getContent();
-            BigDecimal sum = consumptionSum(operations);
-            if (interval.getFirst().getYear() == now.getYear()) {
-                data.add(sum.divide(BigDecimal.valueOf(now.getMonthValue()), HALF_DOWN));
-            } else {
-                data.add(sum.divide(BigDecimal.valueOf(12), HALF_DOWN));
-            }
-            interval = calculator.nextDate();
-        }
-
-        String categoryName = "Все";
-        if (CollectionUtils.isNotEmpty(filter.getIncludeCategoryIds())) {
-            Iterable<Category> categories = categoryRepository.findAllById(filter.getIncludeCategoryIds());
-
-            categoryName = IterableUtils.toList(categories)
-                    .stream()
-                    .map(Category::getName)
-                    .collect(Collectors.joining(","));
-        }
-        return Statistics.builder()
-                .labels(labels)
-                .datasets(singletonList(StatisticItemDto.builder()
-                        .data(data)
-                        .name(categoryName)
-                        .build()))
-                .build();
+        return statisticsService.averageByYearTrend(filter);
     }
 
     @GetMapping("/categoryTrend")
@@ -103,7 +62,7 @@ public class StatisticsController {
 
         Pair<LocalDate, LocalDate> interval = calculator.nextDate();
         List<Long> excludeCategoryIds = ObjectUtils.defaultIfNull(filter.getExcludeCategoryIds(), new ArrayList<>());
-        List<StatisticItemDto> datasets = new ArrayList<>();
+        List<StatisticDataSet> datasets = new ArrayList<>();
         while (interval != null) {
             GroupByDateCalculator monthCalculator = new GroupByDateCalculator(interval.getFirst(), interval.getSecond(), StatisticsGroupBy.MONTH);
             Pair<LocalDate, LocalDate> monthInterval = monthCalculator.nextDate();
@@ -125,7 +84,7 @@ public class StatisticsController {
 
                 monthInterval = monthCalculator.nextDate();
             }
-            datasets.add(StatisticItemDto.builder()
+            datasets.add(StatisticDataSet.builder()
                     .name(String.valueOf(interval.getFirst().getYear()))
                     .data(yearData)
                     .build());
@@ -189,8 +148,8 @@ public class StatisticsController {
             currentCalcDate = currentCalcDate.plusDays(1);
         }
 
-        List<StatisticItemDto> datasets = new ArrayList<>();
-        datasets.add(StatisticItemDto.builder()
+        List<StatisticDataSet> datasets = new ArrayList<>();
+        datasets.add(StatisticDataSet.builder()
                 .name("Динамика среднего расхода")
                 .data(data)
                 .build());
@@ -261,13 +220,13 @@ public class StatisticsController {
             interval = calculator.nextDate();
         }
 
-        List<StatisticItemDto> datasets = new ArrayList<>();
-        datasets.add(StatisticItemDto.builder()
+        List<StatisticDataSet> datasets = new ArrayList<>();
+        datasets.add(StatisticDataSet.builder()
                 .name("Доход")
                 .data(incomeData)
                 .build());
 
-        datasets.add(StatisticItemDto.builder()
+        datasets.add(StatisticDataSet.builder()
                 .name("Расход")
                 .data(consumptionData)
                 .build());
@@ -301,7 +260,7 @@ public class StatisticsController {
         }
 
         if (filter.getFrom() == null) {
-            filter.setFrom(operationService.minOperationDate().toLocalDate());
+            filter.setFrom(operationService.minOperationDate());
         }
     }
 }

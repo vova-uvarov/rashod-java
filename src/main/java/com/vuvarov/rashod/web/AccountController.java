@@ -3,7 +3,7 @@ package com.vuvarov.rashod.web;
 import com.vuvarov.rashod.model.Account;
 import com.vuvarov.rashod.model.dto.AccountBalance;
 import com.vuvarov.rashod.repository.AccountRepository;
-import com.vuvarov.rashod.service.IAccountService;
+import com.vuvarov.rashod.service.interfaces.IAccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

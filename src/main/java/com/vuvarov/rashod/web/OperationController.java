@@ -1,7 +1,7 @@
 package com.vuvarov.rashod.web;
 
 import com.vuvarov.rashod.model.Operation;
-import com.vuvarov.rashod.service.IOperationService;
+import com.vuvarov.rashod.service.interfaces.IOperationService;
 import com.vuvarov.rashod.web.dto.CreateOperationDto;
 import com.vuvarov.rashod.web.dto.OperationFilterDto;
 import lombok.RequiredArgsConstructor;

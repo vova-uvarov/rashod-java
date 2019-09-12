@@ -4,11 +4,14 @@ import com.vuvarov.rashod.model.Operation;
 import com.vuvarov.rashod.web.dto.OperationFilterDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.util.CollectionUtils;
 
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +19,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @RequiredArgsConstructor
 public class OperationSpecification implements Specification<Operation> {
@@ -43,26 +47,31 @@ public class OperationSpecification implements Specification<Operation> {
                     ));
 
         }
-        if (StringUtils.isNotBlank(filter.getTag())) {
+        if (isNotBlank(filter.getTag())) {
             predicates.add(builder.like(root.get("tags"), "%" + filter.getTag() + "%"));
         }
 
-        if (StringUtils.isNotBlank(filter.getComment())) {
+        if (isNotBlank(filter.getComment())) {
             predicates.add(builder.like(builder.lower(root.get("comment")), "%" + filter.getComment().toLowerCase() + "%"));
         }
 
-        if (StringUtils.isNotBlank(filter.getPlace())) {
+        if (isNotBlank(filter.getPlace())) {
             predicates.add(builder.like(builder.lower(root.get("place")), "%" + filter.getPlace().toLowerCase() + "%"));
         }
 
-        if (!CollectionUtils.isEmpty(filter.getCategoryIds())) {
+        if (isNotEmpty(filter.getCategoryIds())) {
             predicates.add(root.get("category").get("id").in(filter.getCategoryIds()));
         }
-        if (!CollectionUtils.isEmpty(filter.getOperationTypes())) {
+
+        if (isNotEmpty(filter.getExcludeCategoryIds())) {
+            predicates.add(builder.not(root.get("category").get("id").in(filter.getExcludeCategoryIds())));
+        }
+
+        if (isNotEmpty(filter.getOperationTypes())) {
             predicates.add(root.get("operationType").in(filter.getOperationTypes()));
         }
 
-        if (!CollectionUtils.isEmpty(filter.getAccountTypes())) {
+        if (isNotEmpty(filter.getAccountTypes())) {
             Join<Object, Object> accountToTransferJoin = root.join("accountToTransfer", JoinType.LEFT);
             predicates.add(builder.or(
                     root.get("account").get("accounType").in(filter.getAccountTypes()),
