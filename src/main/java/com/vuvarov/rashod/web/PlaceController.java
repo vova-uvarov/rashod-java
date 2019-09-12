@@ -1,6 +1,6 @@
 package com.vuvarov.rashod.web;
 
-import com.vuvarov.rashod.service.IPlaceService;
+import com.vuvarov.rashod.service.interfaces.IPlaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

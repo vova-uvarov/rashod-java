@@ -3,7 +3,7 @@ package com.vuvarov.rashod.sum;
 import com.vuvarov.rashod.model.Account;
 import com.vuvarov.rashod.model.Operation;
 import com.vuvarov.rashod.model.dto.AccountBalance;
-import com.vuvarov.rashod.service.IOperationService;
+import com.vuvarov.rashod.service.interfaces.IOperationService;
 import com.vuvarov.rashod.web.dto.OperationFilterDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;

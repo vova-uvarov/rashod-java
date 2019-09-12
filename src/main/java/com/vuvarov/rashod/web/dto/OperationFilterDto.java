@@ -33,6 +33,7 @@ public class OperationFilterDto {
     List<AccountType> accountTypes;
     List<String> shoppingList;
     List<Long> categoryIds;
+    List<Long> excludeCategoryIds;
     List<Long> accountIds;
     String tag;
     Boolean isPlan;

@@ -1,4 +1,4 @@
-package com.vuvarov.rashod.statistics;
+package com.vuvarov.rashod.statistics.dto;
 
 import com.vuvarov.rashod.web.dto.statistics.StatisticsGroupBy;
 import org.springframework.data.util.Pair;

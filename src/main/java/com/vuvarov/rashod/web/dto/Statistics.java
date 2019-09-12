@@ -13,5 +13,5 @@ import java.util.List;
 @NoArgsConstructor
 public class Statistics {
     List<String> labels;
-    List<StatisticItemDto> datasets;
+    List<StatisticDataSet> datasets;
 }

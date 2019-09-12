@@ -7,6 +7,7 @@ import com.vuvarov.rashod.processor.IProcessor;
 import com.vuvarov.rashod.repository.OperationRepository;
 import com.vuvarov.rashod.repository.ShoppingItemRepository;
 import com.vuvarov.rashod.repository.specification.OperationSpecification;
+import com.vuvarov.rashod.service.interfaces.IOperationService;
 import com.vuvarov.rashod.web.dto.CreateOperationDto;
 import com.vuvarov.rashod.web.dto.OperationFilterDto;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -30,10 +32,19 @@ public class OperationService implements IOperationService {
     private final List<IProcessor<Operation>> processors;
 
     @Override
-    public LocalDateTime minOperationDate(){
+    public LocalDateTime minOperationDateTime() {
         return repository.minOperationDate();
     }
 
+    @Override
+    public LocalDate minOperationDate() {
+        return repository.minOperationDate().toLocalDate();
+    }
+
+    @Override
+    public List<Operation> search(OperationFilterDto filter) {
+        return search(filter, Pageable.unpaged()).getContent();
+    }
     @Override
     public Page<Operation> search(OperationFilterDto filter, Pageable pageable) {
         return repository.findAll(new OperationSpecification(filter), pageable);
@@ -95,7 +106,7 @@ public class OperationService implements IOperationService {
     private Operation saveWithItems(Operation operation) {
         Operation savedOperation = repository.save(operation);
         List<ShoppingItem> shoppingList = savedOperation.getShoppingList();
-        if (shoppingList!=null) {
+        if (shoppingList != null) {
             shoppingList.forEach(item -> item.setOperationId(savedOperation.getId()));
             savedOperation.setShoppingList(toList(shoppingList));
         }

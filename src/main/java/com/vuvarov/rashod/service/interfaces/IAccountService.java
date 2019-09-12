@@ -1,4 +1,4 @@
-package com.vuvarov.rashod.service;
+package com.vuvarov.rashod.service.interfaces;
 
 import com.vuvarov.rashod.model.dto.AccountBalance;
 

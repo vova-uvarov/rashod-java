@@ -6,6 +6,7 @@ import com.vuvarov.rashod.model.enums.AccountStatus;
 import com.vuvarov.rashod.model.enums.AccountType;
 import com.vuvarov.rashod.model.enums.Currency;
 import com.vuvarov.rashod.repository.AccountRepository;
+import com.vuvarov.rashod.service.interfaces.IAccountService;
 import com.vuvarov.rashod.sum.AccountBalanceCalculator;
 import com.vuvarov.rashod.sum.AccountsBalanceCalculator;
 import lombok.RequiredArgsConstructor;

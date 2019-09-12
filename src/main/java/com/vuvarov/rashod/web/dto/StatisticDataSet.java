@@ -12,7 +12,8 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class StatisticItemDto {
+public class StatisticDataSet {
+    private String code;
     private String name;
     private List<BigDecimal> data;
 }
