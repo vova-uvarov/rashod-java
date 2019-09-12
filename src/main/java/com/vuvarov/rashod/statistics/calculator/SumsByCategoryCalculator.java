@@ -22,7 +22,7 @@ import static java.math.RoundingMode.HALF_DOWN;
 
 @Component
 @RequiredArgsConstructor
-public class AverageByYearTrendCalculator extends AbstractStatisticsCalculator {
+public class SumsByCategoryCalculator extends AbstractStatisticsCalculator {
 
     private static final String DATASET_CODE = "MAIN";
     private static final BigDecimal MONTHS_IN_YEAR = BigDecimal.valueOf(12);
