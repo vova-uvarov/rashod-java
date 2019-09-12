@@ -30,6 +30,11 @@ public class OperationService implements IOperationService {
     private final List<IProcessor<Operation>> processors;
 
     @Override
+    public LocalDateTime minOperationDate(){
+        return repository.minOperationDate();
+    }
+
+    @Override
     public Page<Operation> search(OperationFilterDto filter, Pageable pageable) {
         return repository.findAll(new OperationSpecification(filter), pageable);
     }
