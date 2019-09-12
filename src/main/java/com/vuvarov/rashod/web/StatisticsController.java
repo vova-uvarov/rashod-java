@@ -1,10 +1,12 @@
 package com.vuvarov.rashod.web;
 
+import com.vuvarov.rashod.model.Category;
 import com.vuvarov.rashod.model.Operation;
 import com.vuvarov.rashod.model.enums.OperationType;
 import com.vuvarov.rashod.model.param.ParamGroup;
 import com.vuvarov.rashod.model.param.ParamKey;
 import com.vuvarov.rashod.repository.AppParamRepository;
+import com.vuvarov.rashod.repository.CategoryRepository;
 import com.vuvarov.rashod.service.OperationService;
 import com.vuvarov.rashod.statistics.GroupByDateCalculator;
 import com.vuvarov.rashod.statistics.LabelFormatter;
@@ -16,6 +18,8 @@ import com.vuvarov.rashod.web.dto.statistics.StatisticsFilterDto;
 import com.vuvarov.rashod.web.dto.statistics.StatisticsGroupBy;
 import com.vuvarov.rashod.web.dto.statistics.StatisticsPieData;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.util.Pair;
@@ -27,10 +31,17 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.temporal.TemporalAdjusters;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.math.RoundingMode.HALF_DOWN;
+import static java.util.Collections.singletonList;
 
 @RestController
 @RequestMapping("/api/statistics")
@@ -38,7 +49,50 @@ import static java.math.RoundingMode.HALF_DOWN;
 public class StatisticsController {
     private final AppParamRepository paramRepository;
     private final OperationService operationService;
+    private final CategoryRepository categoryRepository;
     private final LabelFormatter labelFormatter;
+
+    @GetMapping("/averageByYearTrend")
+    public Statistics averageByYearTrend(StatisticsFilterDto filter) {
+        GroupByDateCalculator calculator = new GroupByDateCalculator(operationService.minOperationDate().toLocalDate(), LocalDate.now(), StatisticsGroupBy.YEAR);
+        List<String> labels = new ArrayList<>();
+        LocalDate now = LocalDate.now();
+        Pair<LocalDate, LocalDate> interval = calculator.nextDate();
+        List<BigDecimal> data = new ArrayList<>();
+        while (interval != null) {
+            labels.add(labelFormatter.format(interval.getFirst(), StatisticsGroupBy.YEAR));
+            List<Operation> operations = operationService.search(OperationFilterDto.builder()
+                    .dateFrom(interval.getFirst())
+                    .dateTo(interval.getSecond())
+                    .categoryIds(filter.getIncludeCategoryIds())
+                    .isPlan(false)
+                    .build(), Pageable.unpaged()).getContent();
+            BigDecimal sum = consumptionSum(operations);
+            if (interval.getFirst().getYear() == now.getYear()) {
+                data.add(sum.divide(BigDecimal.valueOf(now.getMonthValue()), HALF_DOWN));
+            } else {
+                data.add(sum.divide(BigDecimal.valueOf(12), HALF_DOWN));
+            }
+            interval = calculator.nextDate();
+        }
+
+        String categoryName = "Все";
+        if (CollectionUtils.isNotEmpty(filter.getIncludeCategoryIds())) {
+            Iterable<Category> categories = categoryRepository.findAllById(filter.getIncludeCategoryIds());
+
+            categoryName = IterableUtils.toList(categories)
+                    .stream()
+                    .map(Category::getName)
+                    .collect(Collectors.joining(","));
+        }
+        return Statistics.builder()
+                .labels(labels)
+                .datasets(singletonList(StatisticItemDto.builder()
+                        .data(data)
+                        .name(categoryName)
+                        .build()))
+                .build();
+    }
 
     @GetMapping("/categoryTrend")
     public Statistics categoryTrend(StatisticsFilterDto filter) {
@@ -54,7 +108,7 @@ public class StatisticsController {
             GroupByDateCalculator monthCalculator = new GroupByDateCalculator(interval.getFirst(), interval.getSecond(), StatisticsGroupBy.MONTH);
             Pair<LocalDate, LocalDate> monthInterval = monthCalculator.nextDate();
             List<BigDecimal> yearData = new ArrayList<>();
-            labels = Arrays.asList("Янв","Фер","Март","Апр","Ма","Июнь","Июль","Авг","Сен","Окт","Нояб","Дек");
+            labels = Arrays.asList("Янв", "Фер", "Март", "Апр", "Май", "Июнь", "Июль", "Авг", "Сен", "Окт", "Нояб", "Дек");
             while (monthInterval != null) {
                 List<Operation> operationForCurrentMonth = operationService.search(OperationFilterDto.builder()
                         .dateFrom(monthInterval.getFirst())
