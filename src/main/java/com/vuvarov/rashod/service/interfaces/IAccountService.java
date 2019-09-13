@@ -16,4 +16,6 @@ public interface IAccountService {
     BigDecimal totalBalance();
 
     List<AccountBalance> balancesGoalByCurrency();
+
+    void equalization(Long id, BigDecimal actualBalance);
 }
