@@ -19,7 +19,7 @@ public class OperationFilterMapper {
     public OperationFilterDto from(StatisticsFilterDto source) {
         OperationFilterDto filter = new OperationFilterDto();
         filter.setDateFrom(ObjectUtils.defaultIfNull(source.getFrom(), operationService.minOperationDate()));
-        filter.setDateTo(ObjectUtils.defaultIfNull(source.getFrom(), LocalDate.now()));
+        filter.setDateTo(ObjectUtils.defaultIfNull(source.getTo(), LocalDate.now()));
         filter.setCategoryIds(source.getIncludeCategoryIds());
         filter.setExcludeCategoryIds(source.getExcludeCategoryIds());
         filter.setIsPlan(BooleanUtils.isTrue(source.getIsPlan()));
