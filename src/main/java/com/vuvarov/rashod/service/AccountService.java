@@ -12,6 +12,7 @@ import com.vuvarov.rashod.sum.AccountsBalanceCalculator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,12 @@ public class AccountService implements IAccountService {
     private final AccountRepository accountRepository;
     private final AccountsBalanceCalculator accountsBalanceCalculator;
     private final AccountBalanceCalculator accountBalanceCalculator;
+
+    @Override
+    public Account get(Long id) {
+        return accountRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("not found account iwth id: " + id));
+    }
 
     @Override
     public AccountBalance balance(Long accountId) {

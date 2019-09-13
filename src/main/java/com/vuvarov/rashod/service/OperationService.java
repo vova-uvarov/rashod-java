@@ -13,6 +13,7 @@ import com.vuvarov.rashod.web.dto.OperationFilterDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,8 @@ public class OperationService implements IOperationService {
 
     private final OperationRepository repository;
     private final ShoppingItemRepository shoppingItemRepository;
-    private final List<IProcessor<Operation>> processors;
+    @Autowired
+    private  List<IProcessor<Operation>> processors;
 
     @Override
     public LocalDateTime minOperationDateTime() {
