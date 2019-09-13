@@ -1,11 +1,14 @@
 package com.vuvarov.rashod.service;
 
 import com.vuvarov.rashod.model.Account;
+import com.vuvarov.rashod.model.Operation;
 import com.vuvarov.rashod.model.dto.AccountBalance;
 import com.vuvarov.rashod.model.enums.AccountStatus;
 import com.vuvarov.rashod.model.enums.AccountType;
 import com.vuvarov.rashod.model.enums.Currency;
+import com.vuvarov.rashod.model.enums.OperationType;
 import com.vuvarov.rashod.repository.AccountRepository;
+import com.vuvarov.rashod.repository.OperationRepository;
 import com.vuvarov.rashod.service.interfaces.IAccountService;
 import com.vuvarov.rashod.sum.AccountBalanceCalculator;
 import com.vuvarov.rashod.sum.AccountsBalanceCalculator;
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +30,8 @@ public class AccountService implements IAccountService {
     private final AccountRepository accountRepository;
     private final AccountsBalanceCalculator accountsBalanceCalculator;
     private final AccountBalanceCalculator accountBalanceCalculator;
+    private final OperationRepository operationRepository;
+    private final CategoryService categoryService;
 
     @Override
     public Account get(Long id) {
@@ -70,5 +76,22 @@ public class AccountService implements IAccountService {
             result.add(accountBalance);
         }
         return result;
+    }
+
+    @Override
+    public void equalization(Long id, BigDecimal actualBalance) {
+        AccountBalance balance = balance(id);
+        BigDecimal difference = actualBalance.subtract(balance.getBalance());
+        Operation operation = new Operation();
+        operation.setAccount(get(id));
+        operation.setCategory(categoryService.findByName("Уравнивание").get(0)); // todo надо в настроках задавать id это категории
+        operation.setCost(difference.abs());
+        operation.setOperationDate(LocalDateTime.now());
+        if (difference.compareTo(BigDecimal.ZERO) > 0) {
+            operation.setOperationType(OperationType.INCOME);
+        } else {
+            operation.setOperationType(OperationType.CONSUMPTION);
+        }
+        operationRepository.save(operation);
     }
 }

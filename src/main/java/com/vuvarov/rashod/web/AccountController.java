@@ -7,11 +7,13 @@ import com.vuvarov.rashod.service.interfaces.IAccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.JsonPath;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/accounts")
@@ -43,6 +45,11 @@ public class AccountController extends RestRepositoryController<Account, Long, A
     @GetMapping("/totalBalance")
     public BigDecimal totalBalance() {
         return accountService.totalBalance();
+    }
+
+    @PatchMapping("{id}/equalization")
+    public void equalization(@PathVariable Long id, @RequestBody Map<String, BigDecimal> params) {
+        accountService.equalization(id, params.get("actualBalance")); // todo
     }
 
     @Override

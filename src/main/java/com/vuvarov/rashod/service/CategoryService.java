@@ -5,6 +5,7 @@ import com.vuvarov.rashod.repository.CategoryRepository;
 import com.vuvarov.rashod.service.interfaces.ICategoryService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.IterableUtils;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -18,5 +19,10 @@ public class CategoryService implements ICategoryService {
     @Override
     public List<Category> all(Collection<Long> ids) {
         return IterableUtils.toList(repository.findAllById(ids));
+    }
+
+    @Override
+    public List<Category> findByName(String name) {
+        return repository.findAllByName(name, Pageable.unpaged());
     }
 }
