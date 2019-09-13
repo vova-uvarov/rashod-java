@@ -11,6 +11,10 @@ public class OperationUtil {
         return OperationType.TRANSFER.equals(operation.getOperationType());
     }
 
+    public static boolean isConsumption(Operation operation) {
+        return OperationType.CONSUMPTION.equals(operation.getOperationType());
+    }
+
     public static BigDecimal sum(Collection<Operation> operations) {
         return operations.stream()
                 .map(Operation::getCost)
