@@ -45,9 +45,13 @@ public class StatisticsService implements IStatisticsService {
             sums.put(categoryName, sumForCategory.add(op.getCost()));
         });
 
+        if (sums.size() == 0) {
+            sums.put("Нет Данных", BigDecimal.ZERO);
+        }
+
         return sums.entrySet().stream()
                 .sorted(reverseOrder(comparing(Map.Entry::getValue)))
-                .filter(this::isNotNillValue)
+//                .filter(this::isNotNillValue)
                 .map(this::buildData)
                 .collect(Collectors.toList());
     }
