@@ -20,6 +20,7 @@ public class StatisticsFilterDto {
     List<OperationType> operationTypes;
 
     StatisticsGroupBy groupBy;
+    StatisticsSumCalculatorType calculatorType;
 
     Boolean isPlan;
 }
