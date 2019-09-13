@@ -13,5 +13,6 @@ import java.util.List;
 public interface CategoryRepository extends PagingAndSortingRepository<Category, Long> {
 
     @Query("SELECT c FROM Category c WHERE LOWER(c.name) LIKE LOWER(?1)")
-    List<Category> findAllByName(String q, Pageable pageable);
+        // todo параметр сделать именованым
+    List<Category> findAllByName(String q, Pageable pageable); // todo надо возращать Page
 }

@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface ICategoryService {
     List<Category> all(Collection<Long> ids);
+
+    List<Category> findByName(String name);
 }
