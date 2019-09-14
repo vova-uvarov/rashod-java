@@ -37,6 +37,11 @@ public class AccountController extends RestRepositoryController<Account, Long, A
         return accountService.balancesGoalByCurrency();
     }
 
+    @GetMapping("/balances/goal")
+    public List<AccountBalance> goalBalances() {
+        return accountService.goalBalances();
+    }
+
     @GetMapping("/balances")
     public List<AccountBalance> balance() {
         return accountService.accountBalances();
