@@ -94,4 +94,10 @@ public class AccountService implements IAccountService {
         }
         operationRepository.save(operation);
     }
+
+    @Override
+    public List<AccountBalance> goalBalances() {
+        List<Account> accounts = accountRepository.findAllByAccountTypeAndStatus(AccountType.GOAL, AccountStatus.ACTIVE);
+        return accountsBalanceCalculator.calculate(accounts);
+    }
 }

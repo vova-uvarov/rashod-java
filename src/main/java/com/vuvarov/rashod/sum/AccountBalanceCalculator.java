@@ -37,6 +37,7 @@ public class AccountBalanceCalculator implements ICalculator<Account, AccountBal
         return AccountBalance.builder()
                 .accountId(account.getId())
                 .accountName(account.getName())
+                .goalCost(account.getTargetCost())
                 .color(account.getColor())
                 .balance(result)
                 .build();

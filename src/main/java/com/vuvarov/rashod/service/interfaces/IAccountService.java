@@ -18,4 +18,6 @@ public interface IAccountService {
     List<AccountBalance> balancesGoalByCurrency();
 
     void equalization(Long id, BigDecimal actualBalance);
+
+    List<AccountBalance> goalBalances();
 }
