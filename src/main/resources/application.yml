@@ -68,3 +68,11 @@ app:
           value: Активен
         - key: INACTIVE
           value: Архивный
+      paramGroups:
+        - key: COMMON
+          value: Общие
+        - key: PLAN
+          value: План
+      paramKeys:
+        - key: SUM_TO_MONTH
+          value: План на текущий месяц
