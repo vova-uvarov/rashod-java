@@ -15,5 +15,4 @@ public enum Currency {
     ZEC,
     XMR,
     VTC;
-
 }

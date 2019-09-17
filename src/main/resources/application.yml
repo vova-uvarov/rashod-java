@@ -18,3 +18,53 @@ spring:
       ddl-auto: validate
   liquibase:
     changeLog: classpath:/liquibase/db.changelog-master.xml
+
+app:
+  param:
+    dictionaries:
+      operationTypes:
+        - key: CONSUMPTION
+          value: Расход
+        - key: INCOME
+          value: Доход
+        - key: TRANSFER
+          value: Перевод
+      accountTypes:
+        - key: SIMPLE
+          value: Простой
+        - key: DEBT
+          value: Долг
+        - key: GOAL
+          value: Цель
+      currencies:
+        - key: RUB
+          value: Рубль
+        - key: EURO
+          value: Евро
+        - key: DOLLAR
+          value: Доллар
+        - key: AURUM
+          value: Золото
+        - key: ARGENTUM
+          value: Серебро
+        - key: YANDEX
+          value: Акции Яндекс
+        - key: ETF_CH
+          value: Акции Китайских компаний
+        - key: LTC
+          value: Lite Coin
+        - key: XRP
+          value: Ripple
+        - key: NMC
+          value: Name Coin
+        - key: ZEC
+          value: ZEC
+        - key: XMR
+          value: XMR
+        - key: VTC
+          value: VTC
+      accountStatuses:
+        - key: ACTIVE
+          value: Активен
+        - key: INACTIVE
+          value: Архивный
