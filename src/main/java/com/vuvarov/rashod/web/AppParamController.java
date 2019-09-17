@@ -23,16 +23,6 @@ public class AppParamController {
         return IterableUtils.toList(repository.findAll());
     }
 
-    @GetMapping("/groups")
-    public List<ParamGroup> getGroups() {
-        return Arrays.asList(ParamGroup.values());
-    }
-
-    @GetMapping("/keys")
-    public List<ParamKey> getKeys() {
-        return Arrays.asList(ParamKey.values());
-    }
-
     @GetMapping("/{id}")
     public AppParam get(@PathVariable Long id) {
         return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("param not found with id: " + id));

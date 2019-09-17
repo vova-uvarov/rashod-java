@@ -4,6 +4,8 @@ import com.vuvarov.rashod.model.enums.AccountStatus;
 import com.vuvarov.rashod.model.enums.AccountType;
 import com.vuvarov.rashod.model.enums.Currency;
 import com.vuvarov.rashod.model.enums.OperationType;
+import com.vuvarov.rashod.model.param.ParamGroup;
+import com.vuvarov.rashod.model.param.ParamKey;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,6 +23,8 @@ public class Dictionaries {
     List<Record<AccountType>> accountTypes;
     List<Record<AccountStatus>> accountStatuses;
     List<Record<Currency>> currencies;
+    List<Record<ParamGroup>> paramGroups;
+    List<Record<ParamKey>> paramKeys;
 
     @Data
     private static class Record<T> {
