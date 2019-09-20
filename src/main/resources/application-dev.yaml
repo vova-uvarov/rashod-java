@@ -7,3 +7,5 @@ spring:
     drop-first: true
   jpa:
     show-sql: true
+server:
+  port: 8093
