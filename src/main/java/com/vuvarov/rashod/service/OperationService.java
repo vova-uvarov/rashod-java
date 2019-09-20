@@ -1,5 +1,6 @@
 package com.vuvarov.rashod.service;
 
+import com.vuvarov.rashod.model.Model;
 import com.vuvarov.rashod.model.Operation;
 import com.vuvarov.rashod.model.ShoppingItem;
 import com.vuvarov.rashod.model.factory.OperationFactory;
@@ -23,6 +24,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +34,7 @@ public class OperationService implements IOperationService {
     private final OperationRepository repository;
     private final ShoppingItemRepository shoppingItemRepository;
     @Autowired
-    private  List<IProcessor<Operation>> processors;
+    private List<IProcessor<Operation>> processors;
 
     @Override
     public LocalDateTime minOperationDateTime() {
@@ -47,6 +50,7 @@ public class OperationService implements IOperationService {
     public List<Operation> search(OperationFilterDto filter) {
         return search(filter, Pageable.unpaged()).getContent();
     }
+
     @Override
     public Page<Operation> search(OperationFilterDto filter, Pageable pageable) {
         return repository.findAll(new OperationSpecification(filter), pageable);
@@ -107,8 +111,18 @@ public class OperationService implements IOperationService {
 
     private Operation saveWithItems(Operation operation) {
         Operation savedOperation = repository.save(operation);
-        List<ShoppingItem> shoppingList = savedOperation.getShoppingList();
+        List<ShoppingItem> shoppingList = operation.getShoppingList();
         if (shoppingList != null) {
+            Set<Long> itemIds = shoppingList.stream()
+                    .filter(op -> op.getId() != null)
+                    .map(Model::getId)
+                    .collect(Collectors.toSet());
+            List<ShoppingItem> existsOperations = shoppingItemRepository.findAllByOperationId(savedOperation.getId());
+            existsOperations.stream()
+                    .filter(op -> !itemIds.contains(op.getId()))
+                    .forEach(op -> shoppingItemRepository.deleteById(op.getId()));
+
+
             shoppingList.forEach(item -> item.setOperationId(savedOperation.getId()));
             savedOperation.setShoppingList(toList(shoppingList));
         }
