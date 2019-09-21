@@ -20,12 +20,18 @@ public class OperationSavePostProcessor implements IProcessor<Operation> {
     @Autowired
     private  AccountService accountService; // todo циклическая зависимость
 
+    @Autowired
+    private  CategoryService categoryService; // todo циклическая зависимость
+
     private static final String AUTO_ROUND_TEXT = " #<- "; // todo похожена хак. Наверное надо как-йто признак об округлении добавить в операцию
 
     //    todo наверное стоит разделить на несколько процессоров
     @Override
     public void process(Operation operation) {
 
+        if (isTransfer(operation)){
+            operation.setCategory(categoryService.findByName("Перевод").get(0)); // todo похоже на хак
+        }
         if (!isTransfer(operation)) {
             operation.setAccountToTransfer(null);
         }
