@@ -1,6 +1,7 @@
 package com.vuvarov.rashod.web;
 
 import com.vuvarov.rashod.model.ShoppingItem;
+import com.vuvarov.rashod.model.enums.OperationType;
 import com.vuvarov.rashod.repository.ShoppingItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -10,7 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/shoppingItems")
@@ -23,7 +27,8 @@ public class ShoppingItemController extends RestRepositoryController<ShoppingIte
     }
 
     @GetMapping("/names")
-    public List<String> all() {
-        return repository.findAllNames();
+    public Map<OperationType, List<String>> all() {
+        return Arrays.stream(OperationType.values())
+                .collect(Collectors.toMap(t -> t, t -> repository.findAllNamesByOperationType(t)));
     }
 }
