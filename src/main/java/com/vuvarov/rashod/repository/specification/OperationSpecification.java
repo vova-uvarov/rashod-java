@@ -34,7 +34,7 @@ public class OperationSpecification implements Specification<Operation> {
             Join<Object, Object> shoppingListJoin = root.join("shoppingList", JoinType.LEFT);
             List<String> shoppingList = filter.getShoppingList();
             for (String shoppingItem : shoppingList) {
-                predicates.add(builder.like(builder.lower(shoppingListJoin.get("name")), "%" + shoppingItem + "%"));
+                predicates.add(builder.like(builder.lower(shoppingListJoin.get("name")), "%" + shoppingItem.toLowerCase() + "%"));
             }
 
         }
