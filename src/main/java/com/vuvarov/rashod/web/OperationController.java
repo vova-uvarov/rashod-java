@@ -38,4 +38,9 @@ public class OperationController {
     public Operation createOperations(@RequestBody CreateOperationDto createOperationDto) {
         return service.save(createOperationDto);
     }
+
+    @GetMapping("/plans/count")
+    public long countPlans(){
+        return service.countPlans();
+    }
 }
