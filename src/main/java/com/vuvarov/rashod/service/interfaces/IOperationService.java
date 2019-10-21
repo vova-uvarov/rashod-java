@@ -25,4 +25,6 @@ public interface IOperationService {
     void delete(Long id);
 
     Operation get(Long id);
+
+    long countPlans();
 }

@@ -97,6 +97,11 @@ public class OperationService implements IOperationService {
                 .orElseThrow(() -> new EntityNotFoundException("operation not found with id: " + id));
     }
 
+    @Override
+    public long countPlans() {
+        return repository.countAllByOperationDateIsBetweenAndPlan(LocalDate.now().atStartOfDay(),LocalDate.now().plusDays(1).atStartOfDay(), true);
+    }
+
     private void saveRepeats(Operation baseOperation, Long countRepeat) {
         LocalDateTime currentOperationDate = baseOperation.getOperationDate();
         for (int i = 1; i < countRepeat; i++) {
