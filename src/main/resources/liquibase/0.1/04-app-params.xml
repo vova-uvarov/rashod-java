@@ -14,5 +14,32 @@
         </insert>
     </changeSet>
 
+    <changeSet id="27092019-0858" author="vuvarov">
+        <addColumn tableName="app_param">
+            <column name="category_id" type="bigint"/>
+            <column name="account_id" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="27092019-0915" author="vuvarov">
+        <insert tableName="app_param">
+            <column name="group_name" value="DEFAULT_VALUES"/>
+            <column name="key_name" value="CREATE_OPERATION_CATEGORY"/>
+            <column name="name" value="План на месяц"/>
+            <column name="ins_time" valueDate="now()"/>
+            <column name="category_id" valueComputed="(select id from category where name='Продукты')"/>
+            <column name="modif_time" valueDate="now()"/>
+        </insert>
+
+        <insert tableName="app_param">
+            <column name="group_name" value="DEFAULT_VALUES"/>
+            <column name="key_name" value="CREATE_OPERATION_ACCOUNT"/>
+            <column name="name" value="План на месяц"/>
+            <column name="ins_time" valueDate="now()"/>
+            <column name="account_id" valueComputed="(select id from account where name='Кредитка')"/>
+            <column name="modif_time" valueDate="now()"/>
+        </insert>
+    </changeSet>
+
 
 </databaseChangeLog>
