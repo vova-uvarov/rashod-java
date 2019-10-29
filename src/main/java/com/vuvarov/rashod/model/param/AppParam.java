@@ -1,5 +1,7 @@
 package com.vuvarov.rashod.model.param;
 
+import com.vuvarov.rashod.model.Account;
+import com.vuvarov.rashod.model.Category;
 import com.vuvarov.rashod.model.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,4 +26,12 @@ public class AppParam extends Model {
     BigDecimal decimalValue;
     Boolean boolValue;
     Date dateValue;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "categoryId", referencedColumnName = "id")
+    Category category;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "accountId", referencedColumnName = "id")
+    Account account;
 }

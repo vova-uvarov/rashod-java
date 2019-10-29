@@ -74,6 +74,12 @@ app:
           value: Общие
         - key: PLAN
           value: План
+        - key: DEFAULT_VALUES
+          value: Значения по умолчанию
       paramKeys:
         - key: SUM_TO_MONTH
           value: План на текущий месяц
+        - key: CREATE_OPERATION_CATEGORY
+          value: Категория по умолчанию при создании
+        - key: CREATE_OPERATION_ACCOUNT
+          value: Счет по умолчанию при создании
