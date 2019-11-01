@@ -2,6 +2,7 @@ package com.vuvarov.rashod.service.interfaces;
 
 import com.vuvarov.rashod.model.Account;
 import com.vuvarov.rashod.model.dto.AccountBalance;
+import com.vuvarov.rashod.model.enums.AccountStatus;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,4 +21,6 @@ public interface IAccountService {
     void equalization(Long id, BigDecimal actualBalance);
 
     List<AccountBalance> goalBalances();
+
+    List<AccountBalance> debtAccounts(AccountStatus status);
 }

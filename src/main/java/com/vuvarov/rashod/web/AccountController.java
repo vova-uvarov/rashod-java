@@ -2,6 +2,7 @@ package com.vuvarov.rashod.web;
 
 import com.vuvarov.rashod.model.Account;
 import com.vuvarov.rashod.model.dto.AccountBalance;
+import com.vuvarov.rashod.model.enums.AccountStatus;
 import com.vuvarov.rashod.repository.AccountRepository;
 import com.vuvarov.rashod.service.interfaces.IAccountService;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,11 @@ public class AccountController extends RestRepositoryController<Account, Long, A
     @GetMapping("/balances")
     public List<AccountBalance> balance() {
         return accountService.accountBalances();
+    }
+
+    @GetMapping("/balances/debt/{status}")
+    public List<AccountBalance> debts(@PathVariable AccountStatus status) {
+        return accountService.debtAccounts(status);
     }
 
     @GetMapping("/totalBalance")

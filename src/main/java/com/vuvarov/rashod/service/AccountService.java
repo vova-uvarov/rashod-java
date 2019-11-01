@@ -100,4 +100,10 @@ public class AccountService implements IAccountService {
         List<Account> accounts = accountRepository.findAllByAccountTypeAndStatus(AccountType.GOAL, AccountStatus.ACTIVE);
         return accountsBalanceCalculator.calculate(accounts);
     }
+
+    @Override
+    public List<AccountBalance> debtAccounts(AccountStatus status) {
+        List<Account> accounts = accountRepository.findAllByAccountTypeAndStatus(AccountType.DEBT, status);
+        return accountsBalanceCalculator.calculate(accounts);
+    }
 }
