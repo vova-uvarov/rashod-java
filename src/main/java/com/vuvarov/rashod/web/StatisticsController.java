@@ -102,6 +102,7 @@ public class StatisticsController {
     @GetMapping("/averageByDayInCurrMonth")
     public Statistics averageByDayInCurrMonth(StatisticsFilterDto filter) {
         normalizeFilter(filter);
+        List<LocalDate> dates = new ArrayList<>();
         List<String> labels = new ArrayList<>();
         List<BigDecimal> data = new ArrayList<>();
         LocalDate currentCalcDate = LocalDate.now().withDayOfMonth(1);
@@ -110,6 +111,7 @@ public class StatisticsController {
         BigDecimal totalSum = BigDecimal.ZERO;
         while (currentCalcDate.isBefore(LocalDate.now().plusDays(1))) {
             labels.add(labelFormatter.format(currentCalcDate, StatisticsGroupBy.DAY));
+            dates.add(currentCalcDate);
             List<Operation> currentOperations = getOperations(currentCalcDate, currentCalcDate);
 
             currentOperations = currentOperations.stream()
@@ -123,11 +125,12 @@ public class StatisticsController {
 
         List<StatisticDataSet> datasets = new ArrayList<>();
         datasets.add(StatisticDataSet.builder()
-                .name("Динамика среднего расхода")
+                .name("Динамика среднего расхода") // todo не должно этого тут быть
                 .data(data)
                 .build());
 
         return Statistics.builder()
+                .dates(dates)
                 .labels(labels)
                 .datasets(datasets)
                 .build();
