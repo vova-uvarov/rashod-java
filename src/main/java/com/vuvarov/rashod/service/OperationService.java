@@ -23,6 +23,7 @@ import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -99,7 +100,7 @@ public class OperationService implements IOperationService {
 
     @Override
     public long countPlans() {
-        return repository.countAllByOperationDateIsBetweenAndPlan(LocalDate.now().atStartOfDay(),LocalDate.now().plusDays(1).atStartOfDay(), true);
+        return repository.countAllByOperationDateBeforeAndPlan(LocalDate.now().atStartOfDay().with(LocalTime.MAX), true);
     }
 
     private void saveRepeats(Operation baseOperation, Long countRepeat) {
