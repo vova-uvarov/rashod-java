@@ -14,12 +14,21 @@ spring:
     password: p123
   jpa:
     generate-ddl: false
+    properties:
+      hibernate:
+        format_sql: true
     hibernate:
       ddl-auto: validate
   liquibase:
     changeLog: classpath:/liquibase/db.changelog-master.xml
     drop-first: false
 
+logging:
+  level:
+    org:
+      hibernate:
+        type: INFO
+        SQL: INFO
 app:
   param:
     dictionaries:

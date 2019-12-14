@@ -21,6 +21,5 @@ public interface OperationRepository extends PagingAndSortingRepository<Operatio
     @Query("select min(op.operationDate) from Operation op")
     LocalDateTime minOperationDate(); // todo это можно кэшировать
 
-
-    long countAllByOperationDateIsBetweenAndPlan(LocalDateTime dateFrom, LocalDateTime dateTo, boolean isPlan);
+    long countAllByOperationDateBeforeAndPlan(LocalDateTime date, boolean isPlan);
 }
