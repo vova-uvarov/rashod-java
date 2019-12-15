@@ -24,9 +24,6 @@ public class GroupByDateCalculator {
             currentDate = firstDate;
             return Pair.of(currentDate, endDate(currentDate));
         }
-        if (currentDate.isAfter(endDate)) {
-            return null;
-        }
 
         if (StatisticsGroupBy.DAY.equals(groupBy)) {
             currentDate = currentDate.plusDays(1);
@@ -35,6 +32,11 @@ public class GroupByDateCalculator {
         } else {
             currentDate = currentDate.plusMonths(1);
         }
+
+        if (currentDate.isAfter(endDate)) {
+            return null;
+        }
+
         return Pair.of(currentDate, endDate(currentDate));
     }
 

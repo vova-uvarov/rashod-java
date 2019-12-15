@@ -62,6 +62,7 @@ public class StatisticsController {
             GroupByDateCalculator monthCalculator = new GroupByDateCalculator(interval.getFirst(), interval.getSecond(), StatisticsGroupBy.MONTH);
             Pair<LocalDate, LocalDate> monthInterval = monthCalculator.nextDate();
             List<BigDecimal> yearData = new ArrayList<>();
+//            todo странновая штука. Стоит убрать думаю
             labels = Arrays.asList("Янв", "Фер", "Март", "Апр", "Май", "Июнь", "Июль", "Авг", "Сен", "Окт", "Нояб", "Дек");
             while (monthInterval != null) {
                 List<Operation> operationForCurrentMonth = operationService.search(OperationFilterDto.builder()
@@ -146,8 +147,6 @@ public class StatisticsController {
 
     @GetMapping("/plan/month")
     public MonthPlanDto monthPlan() {
-//        private BigDecimal canSpend;
-//        private BigDecimal canSpendFroPlan;
         BigDecimal totalMonthPlan = paramRepository.findByGroupNameAndKeyName(ParamGroup.PLAN, ParamKey.SUM_TO_MONTH).getDecimalValue();
         YearMonth yearMonthObject = YearMonth.from(LocalDate.now());
         List<Operation> currentOperations = getOperations(LocalDate.now().withDayOfMonth(1), LocalDate.now().with(TemporalAdjusters.lastDayOfMonth()));
