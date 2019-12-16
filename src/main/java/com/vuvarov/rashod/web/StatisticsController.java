@@ -175,12 +175,14 @@ public class StatisticsController {
         GroupByDateCalculator calculator = new GroupByDateCalculator(filter.getFrom(), filter.getTo(), filter.getGroupBy());
 
         List<String> labels = new ArrayList<>();
+        List<LocalDate> dates = new ArrayList<>();
         List<BigDecimal> incomeData = new ArrayList<>();
         List<BigDecimal> consumptionData = new ArrayList<>();
 
         Pair<LocalDate, LocalDate> interval = calculator.nextDate();
         while (interval != null) {
             labels.add(labelFormatter.format(interval.getFirst(), filter.getGroupBy()));
+            dates.add(interval.getFirst());
             List<Long> excludeCategoryIds = ObjectUtils.defaultIfNull(filter.getExcludeCategoryIds(), new ArrayList<>());
 
             List<Operation> operationForCurrentMonth = getOperations(interval.getFirst(), interval.getSecond());
@@ -207,6 +209,7 @@ public class StatisticsController {
                 .build());
 
         return Statistics.builder()
+                .dates(dates)
                 .labels(labels)
                 .datasets(datasets)
                 .build();
