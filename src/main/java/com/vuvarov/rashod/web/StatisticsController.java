@@ -53,18 +53,17 @@ public class StatisticsController {
         normalizeFilter(filter);
         GroupByDateCalculator calculator = new GroupByDateCalculator(filter.getFrom(), filter.getTo(), StatisticsGroupBy.YEAR);
 
-        List<String> labels = new ArrayList<>();
-
         Pair<LocalDate, LocalDate> interval = calculator.nextDate();
         List<Long> excludeCategoryIds = ObjectUtils.defaultIfNull(filter.getExcludeCategoryIds(), new ArrayList<>());
         List<StatisticDataSet> datasets = new ArrayList<>();
         while (interval != null) {
             GroupByDateCalculator monthCalculator = new GroupByDateCalculator(interval.getFirst(), interval.getSecond(), StatisticsGroupBy.MONTH);
             Pair<LocalDate, LocalDate> monthInterval = monthCalculator.nextDate();
+            List<LocalDate> dates = new ArrayList<>();
             List<BigDecimal> yearData = new ArrayList<>();
-//            todo странновая штука. Стоит убрать думаю
-            labels = Arrays.asList("Янв", "Фер", "Март", "Апр", "Май", "Июнь", "Июль", "Авг", "Сен", "Окт", "Нояб", "Дек");
             while (monthInterval != null) {
+
+                dates.add(monthInterval.getFirst());
                 List<Operation> operationForCurrentMonth = operationService.search(OperationFilterDto.builder()
                         .dateFrom(monthInterval.getFirst())
                         .dateTo(monthInterval.getSecond())
@@ -81,6 +80,7 @@ public class StatisticsController {
                 monthInterval = monthCalculator.nextDate();
             }
             datasets.add(StatisticDataSet.builder()
+                    .dates(dates)
                     .name(String.valueOf(interval.getFirst().getYear()))
                     .data(yearData)
                     .build());
@@ -89,7 +89,8 @@ public class StatisticsController {
         }
 
         return Statistics.builder()
-                .labels(labels)
+                //            todo странновая штука. Стоит убрать думаю
+                .labels(Arrays.asList("Янв", "Фер", "Март", "Апр", "Май", "Июнь", "Июль", "Авг", "Сен", "Окт", "Нояб", "Дек"))
                 .datasets(datasets)
                 .build();
     }
@@ -125,13 +126,20 @@ public class StatisticsController {
         }
 
         List<StatisticDataSet> datasets = new ArrayList<>();
+        MonthPlanDto monthPlanDto = monthPlan();
+        datasets.add(StatisticDataSet.builder()
+                .name("План среднего расхода")
+                .dates(dates)
+                .data(dates.stream().map(d->monthPlanDto.getPlanForDay()).collect(Collectors.toList()))
+                .build());
+
         datasets.add(StatisticDataSet.builder()
                 .name("Динамика среднего расхода") // todo не должно этого тут быть
+                .dates(dates)
                 .data(data)
                 .build());
 
         return Statistics.builder()
-                .dates(dates)
                 .labels(labels)
                 .datasets(datasets)
                 .build();
@@ -199,17 +207,18 @@ public class StatisticsController {
 
         List<StatisticDataSet> datasets = new ArrayList<>();
         datasets.add(StatisticDataSet.builder()
+                .dates(dates)
                 .name("Доход")
                 .data(incomeData)
                 .build());
 
         datasets.add(StatisticDataSet.builder()
+                .dates(dates)
                 .name("Расход")
                 .data(consumptionData)
                 .build());
 
         return Statistics.builder()
-                .dates(dates)
                 .labels(labels)
                 .datasets(datasets)
                 .build();

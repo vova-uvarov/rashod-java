@@ -1,6 +1,5 @@
 package com.vuvarov.rashod.web.dto.statistics;
 
-import com.vuvarov.rashod.web.dto.statistics.StatisticDataSet;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Statistics {
-    List<LocalDate> dates;
     List<String> labels;
     List<StatisticDataSet> datasets;
 }

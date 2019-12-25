@@ -4,12 +4,13 @@ import com.vuvarov.rashod.model.enums.AccountStatus;
 import com.vuvarov.rashod.model.enums.AccountType;
 import com.vuvarov.rashod.model.enums.Currency;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 //todo возможно стоит разделить наследованием
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 public class Account  extends Model{
