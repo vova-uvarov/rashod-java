@@ -1,26 +1,19 @@
 package com.vuvarov.rashod.service.interfaces;
 
 import com.vuvarov.rashod.model.Account;
-import com.vuvarov.rashod.model.dto.AccountBalance;
 import com.vuvarov.rashod.model.enums.AccountStatus;
+import com.vuvarov.rashod.model.enums.AccountType;
+import com.vuvarov.rashod.model.enums.Currency;
 
-import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 public interface IAccountService {
     Account get(Long id);
 
-    AccountBalance balance(Long accountId);
+    List<Account> accountsForBalances();
 
-    List<AccountBalance> accountBalances();
+    Map<Currency, List<Account>> goalAccountsByCurrency();
 
-    BigDecimal totalBalance();
-
-    List<AccountBalance> balancesGoalByCurrency();
-
-    void equalization(Long id, BigDecimal actualBalance);
-
-    List<AccountBalance> goalBalances();
-
-    List<AccountBalance> debtAccounts(AccountStatus status);
+    List<Account> accounts(AccountType accountType, AccountStatus status);
 }

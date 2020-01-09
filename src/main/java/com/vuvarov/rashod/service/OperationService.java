@@ -1,13 +1,16 @@
 package com.vuvarov.rashod.service;
 
 import com.vuvarov.rashod.mapper.OperationMapper;
+import com.vuvarov.rashod.model.Account;
 import com.vuvarov.rashod.model.Model;
 import com.vuvarov.rashod.model.Operation;
 import com.vuvarov.rashod.model.ShoppingItem;
+import com.vuvarov.rashod.model.enums.OperationType;
 import com.vuvarov.rashod.processor.IProcessor;
 import com.vuvarov.rashod.repository.OperationRepository;
 import com.vuvarov.rashod.repository.ShoppingItemRepository;
 import com.vuvarov.rashod.repository.specification.OperationSpecification;
+import com.vuvarov.rashod.service.interfaces.ICategoryService;
 import com.vuvarov.rashod.service.interfaces.IOperationService;
 import com.vuvarov.rashod.web.dto.CreateOperationDto;
 import com.vuvarov.rashod.web.dto.OperationFilterDto;
@@ -35,6 +38,7 @@ public class OperationService implements IOperationService {
     private final OperationRepository repository;
     private final ShoppingItemRepository shoppingItemRepository;
     private final OperationMapper mapper;
+    private final ICategoryService categoryService;
 
     @Autowired
     private List<IProcessor<Operation>> processors;
@@ -103,6 +107,22 @@ public class OperationService implements IOperationService {
     @Override
     public long countPlans() {
         return repository.countAllByOperationDateBeforeAndPlan(LocalDate.now().atStartOfDay().with(LocalTime.MAX), true);
+    }
+
+    @Override
+    public void equalization(Account account, BigDecimal actualBalance, BigDecimal currentBalance) {
+        BigDecimal difference = actualBalance.subtract(currentBalance);
+        Operation operation = new Operation();
+        operation.setAccount(account);
+        operation.setCategory(categoryService.findByName("Уравнивание")); // todo надо в настроках задавать id это категории
+        operation.setCost(difference.abs());
+        operation.setOperationDate(LocalDateTime.now());
+        if (difference.compareTo(BigDecimal.ZERO) > 0) {
+            operation.setOperationType(OperationType.INCOME);
+        } else {
+            operation.setOperationType(OperationType.CONSUMPTION);
+        }
+        repository.save(operation);
     }
 
     private void saveRepeats(Operation baseOperation, Long countRepeat) {
