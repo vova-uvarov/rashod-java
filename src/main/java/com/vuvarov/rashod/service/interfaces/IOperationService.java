@@ -1,11 +1,13 @@
 package com.vuvarov.rashod.service.interfaces;
 
+import com.vuvarov.rashod.model.Account;
 import com.vuvarov.rashod.model.Operation;
 import com.vuvarov.rashod.web.dto.CreateOperationDto;
 import com.vuvarov.rashod.web.dto.OperationFilterDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,4 +29,6 @@ public interface IOperationService {
     Operation get(Long id);
 
     long countPlans();
+
+    void equalization(Account account, BigDecimal actualBalance, BigDecimal currentBalance);
 }
