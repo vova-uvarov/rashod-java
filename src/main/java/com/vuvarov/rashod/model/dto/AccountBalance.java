@@ -11,7 +11,6 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-//todo возможно стоит внутри просто передавать весь account
 public class AccountBalance {
     Long accountId;
     String accountName;
