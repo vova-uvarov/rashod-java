@@ -5,7 +5,6 @@ import com.vuvarov.rashod.service.AccountService;
 import com.vuvarov.rashod.service.CategoryService;
 import com.vuvarov.rashod.util.OperationUtil;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -19,8 +18,6 @@ public class OperationSavePostProcessor implements IProcessor<Operation> {
     private final AccountService accountService;
     private final CategoryService categoryService;
 
-    private static final String AUTO_ROUND_TEXT = " #<- "; // todo похожена хак. Наверное надо как-йто признак об округлении добавить в операцию
-
     //    todo наверное стоит разделить на несколько процессоров
     @Override
     public void process(Operation operation) {
@@ -32,6 +29,8 @@ public class OperationSavePostProcessor implements IProcessor<Operation> {
             operation.setAccountToTransfer(null);
         }
 
+        operation.setInputCost(operation.getCost());
+
         if (OperationUtil.isConsumption(operation)) {
             if (operation.getId() == null && accountService.get(operation.getAccount().getId()).isRound()) {
                 BigDecimal cost = operation.getCost();
@@ -40,7 +39,7 @@ public class OperationSavePostProcessor implements IProcessor<Operation> {
                 BigDecimal remainder = cost.remainder(tenBD);
 
                 if (remainder.intValue() != 0) {
-                    operation.setComment(ObjectUtils.defaultIfNull(operation.getComment(), "") + AUTO_ROUND_TEXT + cost);
+                    operation.setInputCost(cost);
                     operation.setCost(cost.add(tenBD.subtract(remainder)));
                 }
             }
