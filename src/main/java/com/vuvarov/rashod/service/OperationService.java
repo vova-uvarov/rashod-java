@@ -1,9 +1,9 @@
 package com.vuvarov.rashod.service;
 
+import com.vuvarov.rashod.mapper.OperationMapper;
 import com.vuvarov.rashod.model.Model;
 import com.vuvarov.rashod.model.Operation;
 import com.vuvarov.rashod.model.ShoppingItem;
-import com.vuvarov.rashod.model.factory.OperationFactory;
 import com.vuvarov.rashod.processor.IProcessor;
 import com.vuvarov.rashod.repository.OperationRepository;
 import com.vuvarov.rashod.repository.ShoppingItemRepository;
@@ -34,6 +34,8 @@ public class OperationService implements IOperationService {
 
     private final OperationRepository repository;
     private final ShoppingItemRepository shoppingItemRepository;
+    private final OperationMapper mapper;
+
     @Autowired
     private List<IProcessor<Operation>> processors;
 
@@ -106,7 +108,7 @@ public class OperationService implements IOperationService {
     private void saveRepeats(Operation baseOperation, Long countRepeat) {
         LocalDateTime currentOperationDate = baseOperation.getOperationDate();
         for (int i = 1; i < countRepeat; i++) {
-            Operation operationForSave = OperationFactory.copy(baseOperation);
+            Operation operationForSave = mapper.copy(baseOperation);
             operationForSave.setId(null);
             operationForSave.setPlan(true);
             currentOperationDate = currentOperationDate.plusMonths(1);
