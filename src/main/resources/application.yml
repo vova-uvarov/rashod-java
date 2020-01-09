@@ -92,3 +92,8 @@ app:
           value: Категория по умолчанию при создании
         - key: CREATE_OPERATION_ACCOUNT
           value: Счет по умолчанию при создании
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

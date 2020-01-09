@@ -7,7 +7,6 @@ import com.vuvarov.rashod.model.enums.Currency;
 import com.vuvarov.rashod.service.interfaces.IOperationService;
 import com.vuvarov.rashod.web.dto.OperationFilterDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
@@ -20,9 +19,7 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class AccountBalanceCalculator implements ICalculator<Account, AccountBalance> {
-    @Autowired
-    private IOperationService operationService; // todo циклическая зависимость
-
+    private final IOperationService operationService;
     private final OperationSumResolver sumResolver;
 
     @Override
