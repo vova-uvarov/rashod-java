@@ -55,6 +55,11 @@ public class Operation extends Model {
     BigDecimal cost;
 
     /**
+     * Сумма до округления
+     */
+    BigDecimal inputCost ;
+
+    /**
      * Сумма в валюте зачисления. Используется только в переводах
      */
     BigDecimal currencyCost;
