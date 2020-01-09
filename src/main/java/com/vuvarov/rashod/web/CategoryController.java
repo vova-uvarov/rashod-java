@@ -16,11 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class CategoryController extends RestRepositoryController<Category, Long, CategoryRepository> {
 
-    @GetMapping("/search")
-    public Iterable<Category> search(@RequestParam String q, @PageableDefault Pageable pageable) {
-        return repository.findAllByName("%" + q + "%", pageable);
-    }
-
     @Override
     public Page<Category> findAll(@PageableDefault(sort = "name") Pageable pageable) {
         return super.findAll(pageable);
