@@ -6,7 +6,6 @@ import com.vuvarov.rashod.service.interfaces.IOperationService;
 import com.vuvarov.rashod.statistics.LabelFormatter;
 import com.vuvarov.rashod.statistics.StatisticsFactory;
 import com.vuvarov.rashod.statistics.dto.GroupByDateCalculator;
-import com.vuvarov.rashod.util.StatisticsUtil;
 import com.vuvarov.rashod.web.dto.OperationFilterDto;
 import com.vuvarov.rashod.web.dto.statistics.StatisticDataSet;
 import com.vuvarov.rashod.web.dto.statistics.Statistics;
@@ -15,7 +14,6 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +23,6 @@ public abstract class AbstractStatisticsCalculator implements IStatisticsCalcula
     @Getter
     @Autowired
     private IOperationService operationService;
-    @Autowired
-    private StatisticsUtil statisticsUtil;
     @Getter
     @Autowired
     private LabelFormatter labelFormatter;

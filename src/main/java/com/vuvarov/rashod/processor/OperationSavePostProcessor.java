@@ -6,7 +6,6 @@ import com.vuvarov.rashod.service.CategoryService;
 import com.vuvarov.rashod.util.OperationUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -17,11 +16,8 @@ import static com.vuvarov.rashod.util.OperationUtil.isTransfer;
 @RequiredArgsConstructor
 public class OperationSavePostProcessor implements IProcessor<Operation> {
 
-    @Autowired
-    private  AccountService accountService; // todo циклическая зависимость
-
-    @Autowired
-    private  CategoryService categoryService; // todo циклическая зависимость
+    private final AccountService accountService;
+    private final CategoryService categoryService;
 
     private static final String AUTO_ROUND_TEXT = " #<- "; // todo похожена хак. Наверное надо как-йто признак об округлении добавить в операцию
 
@@ -29,7 +25,7 @@ public class OperationSavePostProcessor implements IProcessor<Operation> {
     @Override
     public void process(Operation operation) {
 
-        if (isTransfer(operation)){
+        if (isTransfer(operation)) {
             operation.setCategory(categoryService.findByName("Перевод")); // todo похоже на хак
         }
         if (!isTransfer(operation)) {

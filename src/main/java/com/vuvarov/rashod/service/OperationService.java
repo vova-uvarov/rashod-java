@@ -39,9 +39,7 @@ public class OperationService implements IOperationService {
     private final ShoppingItemRepository shoppingItemRepository;
     private final OperationMapper mapper;
     private final ICategoryService categoryService;
-
-    @Autowired
-    private List<IProcessor<Operation>> processors;
+    private final List<IProcessor<Operation>> processors;
 
     @Override
     public LocalDateTime minOperationDateTime() {
