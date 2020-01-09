@@ -84,7 +84,7 @@ public class AccountService implements IAccountService {
         BigDecimal difference = actualBalance.subtract(balance.getBalance());
         Operation operation = new Operation();
         operation.setAccount(get(id));
-        operation.setCategory(categoryService.findByName("Уравнивание").get(0)); // todo надо в настроках задавать id это категории
+        operation.setCategory(categoryService.findByName("Уравнивание")); // todo надо в настроках задавать id это категории
         operation.setCost(difference.abs());
         operation.setOperationDate(LocalDateTime.now());
         if (difference.compareTo(BigDecimal.ZERO) > 0) {

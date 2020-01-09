@@ -30,7 +30,7 @@ public class OperationSavePostProcessor implements IProcessor<Operation> {
     public void process(Operation operation) {
 
         if (isTransfer(operation)){
-            operation.setCategory(categoryService.findByName("Перевод").get(0)); // todo похоже на хак
+            operation.setCategory(categoryService.findByName("Перевод")); // todo похоже на хак
         }
         if (!isTransfer(operation)) {
             operation.setAccountToTransfer(null);

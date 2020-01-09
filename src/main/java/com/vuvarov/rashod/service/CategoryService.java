@@ -22,7 +22,7 @@ public class CategoryService implements ICategoryService {
     }
 
     @Override
-    public List<Category> findByName(String name) {
-        return repository.findAllByName(name, Pageable.unpaged());
+    public Category findByName(String name) {
+        return repository.findByName(name);
     }
 }
