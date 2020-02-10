@@ -31,6 +31,10 @@ logging:
         SQL: INFO
 app:
   param:
+    operation:
+      author: vuvarov
+      transferCategory: Перевод
+      equalizationCategory: Уравнивание
     dictionaries:
       operationTypes:
         - key: CONSUMPTION

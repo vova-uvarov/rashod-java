@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class AccountBalanceCalculator implements ICalculator<Account, AccountBalance> {
+public class AccountBalanceCalculator implements IBalanceCalculator<Account, AccountBalance> {
     private final IOperationService operationService;
     private final OperationSumResolver sumResolver;
 

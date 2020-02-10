@@ -16,7 +16,7 @@ public class StatisticsUtil {
     private final ICategoryService categoryService;
 
     public String datasetName(Collection<Long> categoryIds){
-        String categoryName = "Все";
+        String categoryName = "Все"; // todo
         if (CollectionUtils.isNotEmpty(categoryIds)) {
 
             categoryName = IterableUtils.toList(categoryService.all(categoryIds))

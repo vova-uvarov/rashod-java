@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 
 import static java.util.Collections.reverseOrder;
 import static java.util.Collections.singletonList;
-import static java.util.Comparator.comparing;
 
 @Service
 @RequiredArgsConstructor
@@ -67,8 +66,7 @@ public class StatisticsService implements IStatisticsService {
         }
 
         return sums.entrySet().stream()
-                .sorted(reverseOrder(comparing(Map.Entry::getValue)))
-//                .filter(this::isNotNillValue)
+                .sorted(reverseOrder(Map.Entry.comparingByValue()))
                 .map(this::buildData)
                 .collect(Collectors.toList());
     }
@@ -78,9 +76,5 @@ public class StatisticsService implements IStatisticsService {
                 .name(entry.getKey())
                 .data(singletonList(entry.getValue()))
                 .build();
-    }
-
-    private boolean isNotNillValue(Map.Entry<String, BigDecimal> entry) {
-        return entry.getValue().compareTo(BigDecimal.ZERO) > 0;
     }
 }

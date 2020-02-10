@@ -1,5 +1,7 @@
 package com.vuvarov.rashod.processor;
 
+import com.vuvarov.rashod.configuration.OperationProperties;
+import com.vuvarov.rashod.model.Account;
 import com.vuvarov.rashod.model.Operation;
 import com.vuvarov.rashod.service.AccountService;
 import com.vuvarov.rashod.service.CategoryService;
@@ -17,22 +19,26 @@ public class OperationSavePostProcessor implements IProcessor<Operation> {
 
     private final AccountService accountService;
     private final CategoryService categoryService;
+    private final OperationProperties operationProperties;
 
-    //    todo наверное стоит разделить на несколько процессоров
     @Override
     public void process(Operation operation) {
 
-        if (isTransfer(operation)) {
-            operation.setCategory(categoryService.findByName("Перевод")); // todo похоже на хак
+        if (operation.getCurrencyCost() == null) {
+            operation.setCurrencyCost(operation.getCost());
         }
-        if (!isTransfer(operation)) {
+
+        if (isTransfer(operation)) {
+            operation.setCategory(categoryService.findByName(operationProperties.getTransferCategory()));
+        } else {
             operation.setAccountToTransfer(null);
         }
 
         operation.setInputCost(operation.getCost());
 
         if (OperationUtil.isConsumption(operation)) {
-            if (operation.getId() == null && accountService.get(operation.getAccount().getId()).isRound()) {
+            Account account = accountService.get(operation.getAccount().getId());
+            if (operation.getId() == null && account.isRound()) {
                 BigDecimal cost = operation.getCost();
                 operation.setCost(cost);
                 BigDecimal tenBD = BigDecimal.valueOf(10);
@@ -45,10 +51,6 @@ public class OperationSavePostProcessor implements IProcessor<Operation> {
             }
         }
 
-        if (operation.getCurrencyCost() == null) { // todo нужно понять зачем это делалось в старом приложении
-            operation.setCurrencyCost(operation.getCost());
-        }
-
-        operation.setAuthor("vuvarov"); // todo hack пока нет пользователей
+        operation.setAuthor(operationProperties.getAuthor());
     }
 }

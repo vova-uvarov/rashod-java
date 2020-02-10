@@ -1,5 +1,6 @@
 package com.vuvarov.rashod.service;
 
+import com.vuvarov.rashod.configuration.OperationProperties;
 import com.vuvarov.rashod.mapper.OperationMapper;
 import com.vuvarov.rashod.model.Account;
 import com.vuvarov.rashod.model.Model;
@@ -17,7 +18,6 @@ import com.vuvarov.rashod.web.dto.OperationFilterDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OperationService implements IOperationService {
 
+    private final OperationProperties operationProperties;
     private final OperationRepository repository;
     private final ShoppingItemRepository shoppingItemRepository;
     private final OperationMapper mapper;
@@ -112,7 +113,7 @@ public class OperationService implements IOperationService {
         BigDecimal difference = actualBalance.subtract(currentBalance);
         Operation operation = new Operation();
         operation.setAccount(account);
-        operation.setCategory(categoryService.findByName("Уравнивание")); // todo надо в настроках задавать id это категории
+        operation.setCategory(categoryService.findByName(operationProperties.getEqualizationCategory()));
         operation.setCost(difference.abs());
         operation.setOperationDate(LocalDateTime.now());
         if (difference.compareTo(BigDecimal.ZERO) > 0) {

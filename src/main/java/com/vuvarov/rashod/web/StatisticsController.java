@@ -117,7 +117,7 @@ public class StatisticsController {
             List<Operation> currentOperations = getOperations(currentCalcDate, currentCalcDate);
 
             currentOperations = currentOperations.stream()
-                    .filter(op -> !excludeCategoryIds.contains(op.getCategory().getId()))// todo
+                    .filter(op -> !excludeCategoryIds.contains(op.getCategory().getId()))
                     .collect(Collectors.toList());
             BigDecimal consumptionSum = consumptionSum(currentOperations);
             totalSum = totalSum.add(consumptionSum);

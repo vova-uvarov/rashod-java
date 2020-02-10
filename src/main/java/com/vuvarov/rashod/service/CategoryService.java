@@ -5,7 +5,6 @@ import com.vuvarov.rashod.repository.CategoryRepository;
 import com.vuvarov.rashod.service.interfaces.ICategoryService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.IterableUtils;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;

@@ -7,7 +7,7 @@ import com.vuvarov.rashod.model.enums.AccountType;
 import com.vuvarov.rashod.repository.AccountRepository;
 import com.vuvarov.rashod.service.interfaces.IAccountService;
 import com.vuvarov.rashod.service.interfaces.IOperationService;
-import com.vuvarov.rashod.sum.ICalculator;
+import com.vuvarov.rashod.sum.IBalanceCalculator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,16 +29,18 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AccountController extends RestRepositoryController<Account, Long, AccountRepository> {
 
+    private static final String ACTUAL_BALANCE_FIELD = "actualBalance";
+
     private final IAccountService accountService;
     private final IOperationService operationService;
-    private final ICalculator<Account, AccountBalance> balanceCalculator;
+    private final IBalanceCalculator<Account, AccountBalance> balanceCalculator;
 
     @GetMapping("/search")
     public Page<Account> search(@RequestParam String q, @PageableDefault Pageable pageable) {
         return repository.findAllByName("%" + q + "%", pageable);
     }
 
-    @GetMapping("/{id}/balance")
+    @GetMapping("/{accountId}/balance")
     public AccountBalance balance(@PathVariable Long accountId) {
         return balanceCalculator.calculate(accountService.get(accountId));
     }
@@ -73,7 +75,7 @@ public class AccountController extends RestRepositoryController<Account, Long, A
     @PatchMapping("{id}/equalization")
     public void equalization(@PathVariable Long id, @RequestBody Map<String, BigDecimal> params) {
         Account account = accountService.get(id);
-        operationService.equalization(account, params.get("actualBalance"), balanceCalculator.calculate(account).getBalance()); // todo
+        operationService.equalization(account, params.get(ACTUAL_BALANCE_FIELD), balanceCalculator.calculate(account).getBalance());
     }
 
     @Override

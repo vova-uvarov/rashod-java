@@ -1,14 +1,13 @@
 package com.vuvarov.rashod.sum;
 
-import com.vuvarov.rashod.model.Account;
-import com.vuvarov.rashod.model.dto.AccountBalance;
 import com.vuvarov.rashod.model.enums.Currency;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-public interface ICalculator<I, R> { // todo подумать над названием интерефейса и возможно просто использовать Function
+//todo странноватый интерфейс
+public interface IBalanceCalculator<I, R> {
     R calculate(I inputData);
 
     List<R> calculate(List<I> inputData);
