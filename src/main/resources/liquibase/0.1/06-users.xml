@@ -1,0 +1,47 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="vuvarov" id="20032020-2212">
+        <createTable tableName="users">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" primaryKeyName="pk_user" unique="true" nullable="false"/>
+            </column>
+            <column name="login" type="varchar(1024)"/>
+            <column name="name" type="varchar(1024)"/>
+
+            <column name="ins_time" remarks="Дата время вставки записи" type="datetime"/>
+            <column name="modif_time" remarks="Дата время модификации записи" type="datetime"/>
+        </createTable>
+
+        <insert tableName="users">
+            <column name="id" value="4985da53-56f8-4e25-a030-2fde8b3e49f7"/>
+            <column name="login" value="vuvarov"/>
+            <column name="name" value="Владимир Уваров"/>
+            <column name="ins_time" valueDate="now()"/>
+            <column name="modif_time" valueDate="now()"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="id" value="6e681d32-3f43-44cd-b9e6-3b03537fc218"/>
+            <column name="login" value="auvarova"/>
+            <column name="name" value="Александра Уварова"/>
+            <column name="ins_time" valueDate="now()"/>
+            <column name="modif_time" valueDate="now()"/>
+        </insert>
+
+
+        <addColumn tableName="operation">
+            <column name="creator_id" type="uuid" value="4985da53-56f8-4e25-a030-2fde8b3e49f7">
+                <constraints references="users(id)" foreignKeyName="fk_creator_id" nullable="true"/>
+            </column>
+        </addColumn>
+        <sql>
+            update operation set creator_id='6e681d32-3f43-44cd-b9e6-3b03537fc218' where author='auvarova'
+        </sql>
+
+        <dropColumn tableName="operation" columnName="author"/>
+    </changeSet>
+
+</databaseChangeLog>

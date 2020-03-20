@@ -1,5 +1,6 @@
 package com.vuvarov.rashod.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.vuvarov.rashod.model.enums.OperationType;
@@ -7,6 +8,7 @@ import com.vuvarov.rashod.util.LocalDate2LocalDateTimeDeserializer;
 import com.vuvarov.rashod.util.LocalDateTime2DateSerializer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,12 +20,13 @@ import javax.persistence.OneToOne;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 //todo возможно стоит сделать наследование (хотя и хранить в одной таблице)
 @Data
 @Entity
 @EqualsAndHashCode(callSuper = true)
-public class Operation extends Model {
+public class Operation extends LongModel {
 
     Long parentId;
 
@@ -67,7 +70,12 @@ public class Operation extends Model {
     boolean plan;
 
     String place; // todo думаю стоит сделать отдельной сущностью
-    String author; // todo это будет пользователь
+    UUID creatorId;
+
+    @OneToOne
+    @JoinColumn(name = "creatorId", updatable = false, insertable = false)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    User creator;
 
     @Enumerated(EnumType.STRING)
     OperationType operationType;

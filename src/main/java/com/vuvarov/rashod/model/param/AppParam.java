@@ -2,6 +2,7 @@ package com.vuvarov.rashod.model.param;
 
 import com.vuvarov.rashod.model.Account;
 import com.vuvarov.rashod.model.Category;
+import com.vuvarov.rashod.model.LongModel;
 import com.vuvarov.rashod.model.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,7 +15,7 @@ import java.util.Date;
 @Data
 @Entity
 @EqualsAndHashCode(callSuper = true)
-public class AppParam extends Model {
+public class AppParam extends LongModel {
     @Enumerated(EnumType.STRING)
     ParamGroup groupName;
     @Enumerated(EnumType.STRING)

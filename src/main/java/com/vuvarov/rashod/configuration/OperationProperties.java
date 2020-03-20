@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties("app.param.operation")
 public class OperationProperties {
-    String author;
     String transferCategory;
     String equalizationCategory;
 }

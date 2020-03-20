@@ -1,5 +1,5 @@
 server:
-  port: 8093
+  port: 8092
   compression:
     enabled: true
 
@@ -45,7 +45,6 @@ app:
         -----END PUBLIC KEY-----
   param:
     operation:
-      author: vuvarov
       transferCategory: Перевод
       equalizationCategory: Уравнивание
     dictionaries:
