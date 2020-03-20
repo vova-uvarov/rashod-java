@@ -22,8 +22,7 @@ apply plugin: 'net.ltgt.apt-idea'
 
 group = 'com.vuvarov'
 version = '0.1.0-SNAPSHOT'
-sourceCompatibility = 1.8
-
+sourceCompatibility = 11
 
 compileJava {
     options.compilerArgs.add("-Amapstruct.unmappedTargetPolicy=IGNORE")
@@ -46,6 +45,8 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
     implementation 'org.springframework.cloud:spring-cloud-starter-consul-discovery'
     implementation('org.springframework.cloud:spring-cloud-starter-config')
+    implementation 'org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure'
+    compile('org.springframework.security:spring-security-jwt:1.1.0.RELEASE')
 
     compile('org.liquibase:liquibase-core')
     // https://mvnrepository.com/artifact/org.apache.commons/commons-csv
