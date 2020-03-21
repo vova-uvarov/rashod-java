@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
-public class Account  extends Model{
+public class Account  extends LongModel{
     private String name;
     private String description;
     @Enumerated(EnumType.STRING)

@@ -14,7 +14,7 @@ import javax.persistence.Enumerated;
 @Entity
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ShoppingItem extends Model {
+public class ShoppingItem extends LongModel {
     Long operationId;
     String name;
     @Enumerated(EnumType.STRING)

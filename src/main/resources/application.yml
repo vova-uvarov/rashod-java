@@ -30,9 +30,21 @@ logging:
         type: INFO
         SQL: INFO
 app:
+#  this is test public key. In production mode ovverride public key use config-server
+  security:
+    jwt:
+      public-key: |
+        -----BEGIN PUBLIC KEY-----
+        MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmEJoLD4j2ZyqiiE3Vmv9
+        Lr3SAm+Y1HezWQCobsKLuQWFPdEN5Y9haVlzfi3khi6hjn4K0Cg3gSjtlyzdhsUt
+        kFQIWktH9f7+6UXiApPHVipgVFcJJ/wl9EIsXVr0Txmh150+3aP3NPDIKWA9KT7/
+        jaPwjWH8qgu5Kidrjxi9DJ/3+diEiYyCp8Bi66Lbxk6YymOeoJDH+VeAn3ziSI+w
+        G20pEe9HVBzEXm+9LqSI2yURhA3VA50fRBqRd+rRBBp+qlLfGsVBYnenB5MmHD0f
+        SLhJeJVf6wSSBA3GxBRu6xPJMf18d3np3gqqwLlqBhlHojoDn4mVlge/rrBljf7K
+        NQIDAQAB
+        -----END PUBLIC KEY-----
   param:
     operation:
-      author: vuvarov
       transferCategory: Перевод
       equalizationCategory: Уравнивание
     dictionaries:

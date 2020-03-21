@@ -6,6 +6,7 @@ import com.vuvarov.rashod.model.Operation;
 import com.vuvarov.rashod.service.AccountService;
 import com.vuvarov.rashod.service.CategoryService;
 import com.vuvarov.rashod.util.OperationUtil;
+import com.vuvarov.rashod.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -51,6 +52,6 @@ public class OperationSavePostProcessor implements IProcessor<Operation> {
             }
         }
 
-        operation.setAuthor(operationProperties.getAuthor());
+        operation.setCreatorId(SecurityUtils.currentUserId());
     }
 }
