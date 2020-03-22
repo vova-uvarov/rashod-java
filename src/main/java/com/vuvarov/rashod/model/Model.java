@@ -14,8 +14,8 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class Model<ID extends Serializable> {
-    @Id
-    private ID id;
+
+    public abstract ID getId();
 
     @CreatedDate
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
