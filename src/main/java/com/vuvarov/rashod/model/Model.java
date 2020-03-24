@@ -18,10 +18,11 @@ public abstract class Model<ID extends Serializable> {
     public abstract ID getId();
 
     @CreatedDate
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+//    @JsonProperty(access = JsonProperty.Access.READ_ONLY) //todo
     LocalDateTime insTime;
 
     @LastModifiedDate
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     LocalDateTime modifTime;
 }
+
