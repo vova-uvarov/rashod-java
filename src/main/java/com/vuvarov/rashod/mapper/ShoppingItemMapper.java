@@ -10,6 +10,7 @@ import java.util.List;
 public interface ShoppingItemMapper {
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "operationId", ignore = true)
     ShoppingItem copy(ShoppingItem item);
 
     List<ShoppingItem> copyList(List<ShoppingItem> source);
