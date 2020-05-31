@@ -21,7 +21,7 @@ apply plugin: 'io.spring.dependency-management'
 apply plugin: 'net.ltgt.apt-idea'
 
 group = 'com.vuvarov'
-version = '0.1.4-SNAPSHOT'
+version = '0.2.0-snapshot'
 sourceCompatibility = 11
 
 compileJava {

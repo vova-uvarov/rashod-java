@@ -20,7 +20,7 @@ public class OperationController {
 
     @GetMapping("/search")
     Page<Operation> search(OperationFilterDto filterDto,
-                           @PageableDefault(sort = {"operationDate", "insTime"}, direction = Sort.Direction.DESC) Pageable pageable) {
+                           @PageableDefault(sort = {"operationDate", "ordinal", "insTime"}, direction = Sort.Direction.DESC) Pageable pageable) {
         return service.search(filterDto, pageable);
     }
 

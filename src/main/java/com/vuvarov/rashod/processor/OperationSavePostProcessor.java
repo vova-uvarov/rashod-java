@@ -8,8 +8,6 @@ import com.vuvarov.rashod.service.CategoryService;
 import com.vuvarov.rashod.util.OperationUtil;
 import com.vuvarov.rashod.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;

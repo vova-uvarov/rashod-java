@@ -69,6 +69,8 @@ public class Operation extends LongModel {
 
     boolean plan;
 
+    Integer ordinal;
+
     String place; // todo думаю стоит сделать отдельной сущностью
     UUID creatorId;
 
