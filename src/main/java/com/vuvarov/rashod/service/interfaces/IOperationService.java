@@ -22,6 +22,8 @@ public interface IOperationService {
 
     Page<Operation> search(OperationFilterDto filter, Pageable pageable);
 
+    List<String> getAllTags();
+
     Operation save(CreateOperationDto request);
 
     void delete(Long id);

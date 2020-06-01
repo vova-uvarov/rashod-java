@@ -1,0 +1,33 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="vuvarov" id="01062020-1912">
+        <createTable tableName="operation_tags">
+            <column name="id" remarks="ID" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="pk_operation_tags"/>
+            </column>
+            <column name="operation_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar(512)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="vuvarov" id="01062020-1919">
+        <sql>
+            <![CDATA[
+            INSERT INTO operation_tags (operation_id, name)
+            SELECT id, tags
+            FROM operation
+            WHERE tags is not  null and tags <> ''
+            ]]>
+        </sql>
+    </changeSet>
+
+    <changeSet author="vuvarov" id="01062020-1926">
+        <dropColumn tableName="operation" columnName="tags"/>
+    </changeSet>
+
+</databaseChangeLog>

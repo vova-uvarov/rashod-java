@@ -32,10 +32,10 @@ public class OperationFilterDto {
     List<OperationType> operationTypes;
     List<AccountType> accountTypes;
     List<String> shoppingList;
+    List<String> tags;
     List<Long> categoryIds;
     List<Long> excludeCategoryIds;
     List<Long> accountIds;
-    String tag;
     Boolean isPlan;
     String place;
     String comment;

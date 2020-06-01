@@ -26,6 +26,11 @@ public class DictionaryController {
         return dictionaries;
     }
 
+    @GetMapping("/tags")
+    List<String> tags() {
+        return operationService.getAllTags();
+    }
+
     @GetMapping("/years")
     List<Integer> years() {
         return IntStream.rangeClosed(operationService.minOperationDate().getYear(), LocalDate.now().getYear())

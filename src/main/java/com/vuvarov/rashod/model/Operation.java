@@ -11,6 +11,7 @@ import lombok.EqualsAndHashCode;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -20,6 +21,7 @@ import javax.persistence.OneToOne;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 //todo возможно стоит сделать наследование (хотя и хранить в одной таблице)
@@ -50,10 +52,9 @@ public class Operation extends LongModel {
      */
     String comment;
 
-    /**
-     * Список тегов через запятую
-     */
-    String tags;
+    @ElementCollection
+    @Column(name="name")
+    Set<String> tags;
 
     BigDecimal cost;
 

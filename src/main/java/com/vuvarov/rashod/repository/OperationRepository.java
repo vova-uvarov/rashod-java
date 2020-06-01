@@ -18,6 +18,9 @@ public interface OperationRepository extends PagingAndSortingRepository<Operatio
     @Query("select distinct op.place from Operation op order by op.place")
     List<String> getAllPlaces();  // todo это можно кэшировать
 
+    @Query(value = "select distinct name from operation_tags op order by op.name", nativeQuery = true)
+    List<String> getAllTags();  // todo это можно кэшировать
+
     @Query("select min(op.operationDate) from Operation op")
     LocalDateTime minOperationDate(); // todo это можно кэшировать
 

@@ -1,6 +1,6 @@
-#docker build -t rashod:v0.1.4
-#docker tag rashod:v0.1.4 uvolodia/pets-projects:rashod_v0.1.4
-#docker push uvolodia/pets-projects:rashod_v0.1.4
+#docker build -t rashod:v0.3.0
+#docker tag rashod:v0.3.0 uvolodia/pets-projects:rashod_v0.3.0
+#docker push uvolodia/pets-projects:rashod_v0.3.0
 FROM adoptopenjdk/openjdk11:alpine-jre
 ADD docker/rashod.jar rashod.jar
 

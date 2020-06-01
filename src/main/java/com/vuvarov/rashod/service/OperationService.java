@@ -63,6 +63,11 @@ public class OperationService implements IOperationService {
     }
 
     @Override
+    public List<String> getAllTags() {
+        return repository.getAllTags();
+    }
+
+    @Override
     public Operation save(CreateOperationDto request) {
         Operation operation = request.getOperation();
         processors.forEach(p -> p.process(operation));

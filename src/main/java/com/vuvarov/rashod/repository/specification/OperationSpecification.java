@@ -47,8 +47,9 @@ public class OperationSpecification implements Specification<Operation> {
                     ));
 
         }
-        if (isNotBlank(filter.getTag())) {
-            predicates.add(builder.like(root.get("tags"), "%" + filter.getTag() + "%"));
+        if (isNotEmpty(filter.getTags())) {
+            Join<Object, Object> tagsJoin = root.join("tags", JoinType.LEFT);
+            predicates.add(tagsJoin.in(filter.getTags()));
         }
 
         if (isNotBlank(filter.getComment())) {
