@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Data
-public class OperationDto {
+public class OldOperationDto {
 
     Long id;
     String author;
