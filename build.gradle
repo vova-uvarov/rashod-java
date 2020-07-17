@@ -52,7 +52,7 @@ dependencies {
     // https://mvnrepository.com/artifact/org.apache.commons/commons-csv
     compile group: 'org.apache.commons', name: 'commons-csv', version: '1.7'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.10'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-collections4
     compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
 
