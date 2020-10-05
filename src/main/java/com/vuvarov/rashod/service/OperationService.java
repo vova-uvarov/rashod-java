@@ -13,6 +13,7 @@ import com.vuvarov.rashod.repository.ShoppingItemRepository;
 import com.vuvarov.rashod.repository.specification.OperationSpecification;
 import com.vuvarov.rashod.service.interfaces.ICategoryService;
 import com.vuvarov.rashod.service.interfaces.IOperationService;
+import com.vuvarov.rashod.util.SecurityUtils;
 import com.vuvarov.rashod.web.dto.CreateOperationDto;
 import com.vuvarov.rashod.web.dto.OperationFilterDto;
 import lombok.RequiredArgsConstructor;
@@ -118,6 +119,7 @@ public class OperationService implements IOperationService {
         BigDecimal difference = actualBalance.subtract(currentBalance);
         Operation operation = new Operation();
         operation.setAccount(account);
+        operation.setCreatorId(SecurityUtils.currentUserId());
         operation.setCategory(categoryService.findByName(operationProperties.getEqualizationCategory()));
         operation.setCost(difference.abs());
         operation.setOperationDate(LocalDateTime.now());

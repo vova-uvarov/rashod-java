@@ -3,7 +3,6 @@ server:
   compression:
     enabled: true
 
-
 spring:
   data:
     rest:
