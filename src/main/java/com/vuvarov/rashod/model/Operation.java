@@ -1,7 +1,11 @@
 package com.vuvarov.rashod.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.vuvarov.rashod.model.enums.OperationType;
+import com.vuvarov.rashod.util.LocalDate2LocalDateTimeDeserializer;
+import com.vuvarov.rashod.util.LocalDateTime2DateSerializer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -79,5 +83,7 @@ public class Operation extends LongModel {
     OperationType operationType;
 
     @Column(columnDefinition = "TIMESTAMP")
+    @JsonSerialize(using = LocalDateTime2DateSerializer.class)
+    @JsonDeserialize(using = LocalDate2LocalDateTimeDeserializer.class)
     LocalDateTime operationDate;
 }
