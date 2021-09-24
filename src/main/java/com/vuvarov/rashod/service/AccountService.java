@@ -33,7 +33,7 @@ public class AccountService implements IAccountService {
     @Override
     public Map<Currency, List<Account>> goalAccountsByCurrency() {
         return accounts(AccountType.GOAL, AccountStatus.ACTIVE).stream()
-                .filter(account -> !(account.getName().contains("Налог") || account.getName().equals("Должны НАМ") || account.getName().equals("Тинькоф Р/C"))) // todo какой-то жесткий хак. Думаю стоит сделать отдельный тип счета или что-то типа того
+                .filter(account -> !(account.getName().contains("Налог") || account.getName().equals("Должны НАМ") || account.getName().equals("ТКС Р/C"))) // todo какой-то жесткий хак. Думаю стоит сделать отдельный тип счета или что-то типа того
                 .collect(Collectors.groupingBy(Account::getCurrency));
     }
 
